@@ -18,7 +18,20 @@ const binPath = path.join(
 );
 
 const abi = JSON.parse(fs.readFileSync(abiPath, "utf8"));
-const bytecode = fs.readFileSync(binPath, "utf8");
+// Читаем байткод и гарантируем наличие префикса 0x
+let bytecode = fs.readFileSync(binPath, "utf8")
+  .replace(/[\r\n\s]+/g, '')  // Удаляем все переносы строк и пробелы
+  .trim();
+
+// Удаляем префикс '0x' если он есть, а затем добавляем заново
+// Это гарантирует, что у нас будет только один префикс 0x
+if (bytecode.startsWith("0x")) {
+  bytecode = bytecode.substring(2);
+}
+bytecode = "0x" + bytecode;
+
+console.log(`Длина байткода: ${bytecode.length}`);
+console.log(`Байткод начинается с: ${bytecode.substring(0, 10)}...`);
 
 // Подключение к блокчейну
 async function deployContract() {
@@ -42,8 +55,54 @@ async function deployContract() {
     console.log(`Использую адрес: ${walletAddress}`);
 
     // Создание фабрики контракта и его деплой
-    console.log("Деплой контракта...");
-    const contractFactory = new ethers.ContractFactory(abi, bytecode, wallet);
+    console.log("Подготовка деплоя контракта...");
+    console.log(`Тип байткода: ${typeof bytecode}`);
+
+    // Проверка, что байткод - это действительно шестнадцатеричная строка с префиксом 0x
+    if (!bytecode.startsWith("0x")) {
+      console.error("Ошибка: Байткод не имеет префикса 0x");
+      bytecode = "0x" + bytecode; // Попытка исправить
+      console.log("Добавлен префикс 0x");
+    }
+    
+    // Проверяем валидность шестнадцатеричной строки после префикса
+    const hexPart = bytecode.substring(2);
+    if (!/^[0-9a-fA-F]+$/.test(hexPart)) {
+      console.error("Ошибка: Байткод содержит недопустимые символы");
+      console.error(`Первые 20 символов байткода: ${bytecode.substring(0, 22)}`);
+      
+      // Попытка очистить байткод от недопустимых символов
+      const cleanedHex = hexPart.replace(/[^0-9a-fA-F]/g, '');
+      if (cleanedHex.length < hexPart.length) {
+        console.log(`Удалено ${hexPart.length - cleanedHex.length} недопустимых символов`);
+        bytecode = "0x" + cleanedHex;
+      } else {
+        throw new Error("Неверный формат байткода. Должен быть шестнадцатеричной строкой с префиксом 0x");
+      }
+    }
+
+    console.log("Создание фабрики контракта...");
+    
+    // Проверка минимальной длины валидного байткода
+    if (bytecode.length < 10) {
+      throw new Error("Байткод слишком короткий, возможно файл поврежден");
+    }
+    
+    let contractFactory;
+    try {
+      contractFactory = new ethers.ContractFactory(abi, bytecode, wallet);
+      console.log("Фабрика контракта успешно создана");
+    } catch (error) {
+      console.error(`Ошибка при создании фабрики контракта: ${error.message}`);
+      if (error.message.includes("toBuffer")) {
+        console.error("Ошибка преобразования байткода в буфер. Запись отладочной информации:");
+        console.error(`Длина байткода: ${bytecode.length}`);
+        console.error(`Начало байткода: ${bytecode.substring(0, 30)}...`);
+        console.error(`Конец байткода: ...${bytecode.substring(bytecode.length - 30)}`);
+        throw new Error("Неверный формат байткода для ethers.js. Проверьте формат EquipmentTracking.bin");
+      }
+      throw error;
+    }
 
     // Устанавливаем ручные параметры газа для решения проблемы
     const deployOptions = {
@@ -72,7 +131,7 @@ async function deployContract() {
 
     return contract.address;
   } catch (error) {
-    console.error("Ошибка при деплое контракта:", error.message);
+    console.error("Ошибка при деплое контракта:", error);
     process.exit(1);
   }
 }

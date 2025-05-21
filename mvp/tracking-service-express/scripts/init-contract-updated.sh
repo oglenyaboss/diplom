@@ -11,7 +11,6 @@ ETH_NODE_URL=${ETH_NODE_URL:-http://ethereum-node:8545}
 ensure_contract_dir() {
   echo "Проверка наличия директории для контрактов..."
   mkdir -p /usr/src/app/contracts
-  touch $CONTRACT_ADDRESS_FILE
   echo "Директория контрактов готова."
 }
 
@@ -45,6 +44,11 @@ check_ethereum_node() {
 check_contract() {
   if [ -f "$CONTRACT_ADDRESS_FILE" ]; then
     CONTRACT_ADDRESS=$(cat $CONTRACT_ADDRESS_FILE)
+    if [ -z "$CONTRACT_ADDRESS" ] || [ "${CONTRACT_ADDRESS:0:2}" != "0x" ]; then
+      echo "Адрес контракта пустой или невалидный. Удаляю файл."
+      rm -f "$CONTRACT_ADDRESS_FILE"
+      return 1
+    fi
     echo "Найден адрес контракта: $CONTRACT_ADDRESS"
     
     # Проверяем, существует ли контракт по этому адресу
@@ -84,8 +88,12 @@ check_ethereum_node || {
 }
 
 # Проверяем существующий контракт
+
+# Если контракта нет или невалиден, ждем дополнительно и деплоим
 if ! check_contract; then
   echo "Необходимо выполнить деплой контракта."
+  echo "Ждем 10 секунд для полной инициализации ноды..."
+  sleep 10
   deploy_contract || {
     echo "Ошибка при деплое контракта, продолжаем запуск сервиса, но контракт не будет работать"
     exit 0
