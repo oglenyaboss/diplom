@@ -1,0 +1,133 @@
+version: "3.8"
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/warehouse_auth
+      - JWT_SECRET=your_jwt_secret_key_for_mvp
+      - PORT=8000
+    depends_on:
+      - mongo
+    networks:
+      - warehouse-network
+    restart: on-failure
+
+  warehouse-service:
+    build: ./warehouse-service
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/warehouse_inventory
+      - PORT=8001
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - mongo
+      - rabbitmq
+      - auth-service
+    networks:
+      - warehouse-network
+    restart: on-failure
+
+  tracking-service:
+    build:
+      context: ./tracking-service-express
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8080"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/warehouse_tracking
+      - PORT=8080
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
+      - ETH_NODE_URL=http://ethereum-node:8545
+      # Не указываем ETH_CONTRACT_ADDRESS, чтобы адрес всегда загружался из файла
+      - ETH_PRIVATE_KEY=1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    volumes:
+      - contract_data:/usr/src/app/contracts
+    depends_on:
+      - mongo
+      - rabbitmq
+      - auth-service
+      - ethereum-node
+    networks:
+      - warehouse-network
+    restart: on-failure
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8003:8003"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/warehouse_notifications
+      - PORT=8003
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - mongo
+      - rabbitmq
+    networks:
+      - warehouse-network
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - warehouse-service
+      - tracking-service
+      - notification-service
+    networks:
+      - warehouse-network
+    restart: on-failure
+
+  mongo:
+    image: mongo:7
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - warehouse-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - warehouse-network
+
+  # Простой локальный узел Ethereum для MVP
+  ethereum-node:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
+    command: >
+      ganache-cli
+      --account="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef,1000000000000000000000"
+      --account="0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890,1000000000000000000000"
+      --account="0x90abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678,1000000000000000000000"
+      -i 5777
+      -h 0.0.0.0
+      --gasLimit 12000000
+      --allowUnlimitedContractSize
+      --db /data
+    volumes:
+      - ethereum_data:/data
+    networks:
+      - warehouse-network
+
+volumes:
+  mongo_data:
+  ethereum_data:
+  contract_data:
+
+networks:
+  warehouse-network:
+    driver: bridge

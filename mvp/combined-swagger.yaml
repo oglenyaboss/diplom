@@ -1,0 +1,525 @@
+openapi: 3.0.0
+info:
+  title: Warehouse Management and Equipment Tracking System API
+  description: Полная документация API для системы управления складом и отслеживания оборудования
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Auth Service
+  - url: http://localhost:8001
+    description: Warehouse Service
+  - url: http://localhost:8002
+    description: Tracking Service
+  - url: http://localhost:8003
+    description: Notification Service
+tags:
+  - name: Auth
+    description: Authentication and user management endpoints
+  - name: Warehouse
+    description: Warehouse inventory management endpoints
+  - name: Tracking
+    description: Equipment tracking and transfer endpoints
+  - name: Blockchain
+    description: Blockchain integration endpoints
+  - name: Notifications
+    description: Notification management endpoints
+paths:
+  # Auth Service API Paths
+  /ping:
+    get:
+      tags:
+        - Auth
+      summary: Проверка работоспособности Auth Service
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+  /signup:
+    post:
+      tags:
+        - Auth
+      summary: Регистрация нового пользователя
+      description: Создает нового пользователя в системе
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+                - first_name
+                - last_name
+              properties:
+                username:
+                  type: string
+                  description: Логин пользователя
+                email:
+                  type: string
+                  description: Email пользователя
+                password:
+                  type: string
+                  description: Пароль пользователя
+                first_name:
+                  type: string
+                  description: Имя пользователя
+                last_name:
+                  type: string
+                  description: Фамилия пользователя
+                department:
+                  type: string
+                  description: Отдел пользователя
+                position:
+                  type: string
+                  description: Должность пользователя
+      responses:
+        "201":
+          description: Пользователь успешно создан
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Авторизация пользователя
+      description: Аутентификация пользователя по логину и паролю
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  description: Логин пользователя
+                password:
+                  type: string
+                  description: Пароль пользователя
+      responses:
+        "200":
+          description: Успешная авторизация
+  /refresh:
+    post:
+      tags:
+        - Auth
+      summary: Обновление JWT токена
+      description: Получение нового JWT токена с помощью refresh токена
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  description: Refresh токен для обновления JWT
+      responses:
+        "200":
+          description: Новый токен успешно создан
+  /profile:
+    get:
+      tags:
+        - Auth
+      summary: Получение профиля текущего пользователя
+      description: Возвращает данные профиля авторизованного пользователя
+      responses:
+        "200":
+          description: Профиль пользователя
+    put:
+      tags:
+        - Auth
+      summary: Обновление профиля текущего пользователя
+      description: Обновляет данные профиля авторизованного пользователя
+      responses:
+        "200":
+          description: Профиль успешно обновлен
+  /users:
+    get:
+      tags:
+        - Auth
+      summary: Получение списка всех пользователей
+      description: Возвращает список всех пользователей системы
+      responses:
+        "200":
+          description: Список пользователей
+    post:
+      tags:
+        - Auth
+      summary: Создание нового пользователя
+      description: Администратор создает нового пользователя
+      responses:
+        "201":
+          description: Пользователь успешно создан
+  /users/{id}:
+    get:
+      tags:
+        - Auth
+      summary: Получение информации о пользователе
+      description: Возвращает данные конкретного пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация о пользователе
+  /users/{id}/role:
+    put:
+      tags:
+        - Auth
+      summary: Изменение роли пользователя
+      description: Администратор изменяет роль пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Роль успешно обновлена
+  /users/{id}/status:
+    put:
+      tags:
+        - Auth
+      summary: Изменение статуса пользователя
+      description: Администратор изменяет статус активности пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Статус успешно обновлен
+  /users/{id}/eth-address:
+    put:
+      tags:
+        - Auth
+      summary: Установка Ethereum адреса пользователя
+      description: Администратор устанавливает Ethereum адрес пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ethereum адрес успешно обновлен
+  /eth-address/{user_id}:
+    get:
+      tags:
+        - Auth
+      summary: Получение Ethereum адреса пользователя
+      description: Возвращает Ethereum адрес указанного пользователя
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ethereum адрес пользователя
+
+  # Warehouse Service API Paths
+  /warehouse/ping:
+    get:
+      tags:
+        - Warehouse
+      summary: Проверка работоспособности Warehouse Service
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+  /warehouse/items:
+    post:
+      tags:
+        - Warehouse
+      summary: Создание нового оборудования на складе
+      description: Добавляет новое оборудование в базу данных склада
+      responses:
+        "201":
+          description: Оборудование успешно создано
+    get:
+      tags:
+        - Warehouse
+      summary: Получение списка оборудования
+      description: Возвращает список оборудования на складе с возможностью фильтрации
+      responses:
+        "200":
+          description: Список оборудования
+  /warehouse/items/{id}:
+    get:
+      tags:
+        - Warehouse
+      summary: Получение информации об оборудовании
+      description: Возвращает детальную информацию о конкретном оборудовании
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация об оборудовании
+    put:
+      tags:
+        - Warehouse
+      summary: Обновление информации об оборудовании
+      description: Обновляет данные о конкретном оборудовании
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Оборудование успешно обновлено
+    delete:
+      tags:
+        - Warehouse
+      summary: Удаление оборудования со склада
+      description: Удаляет оборудование из базы данных склада
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Оборудование успешно удалено
+  /warehouse/transactions:
+    post:
+      tags:
+        - Warehouse
+      summary: Создание новой транзакции
+      description: Добавляет новую транзакцию (приход/расход) оборудования
+      responses:
+        "201":
+          description: Транзакция успешно создана
+    get:
+      tags:
+        - Warehouse
+      summary: Получение списка транзакций
+      description: Возвращает список транзакций с возможностью фильтрации
+      responses:
+        "200":
+          description: Список транзакций
+  /warehouse/transactions/item/{item_id}:
+    get:
+      tags:
+        - Warehouse
+      summary: Получение истории транзакций для оборудования
+      description: Возвращает список транзакций для конкретного оборудования
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: История транзакций для оборудования
+
+  # Tracking Service API Paths
+  /tracking/equipment:
+    post:
+      tags:
+        - Tracking
+      summary: Регистрация нового оборудования для отслеживания
+      description: Создает новое оборудование в системе отслеживания
+      responses:
+        "201":
+          description: Оборудование успешно создано
+    get:
+      tags:
+        - Tracking
+      summary: Получение списка оборудования
+      description: Возвращает список оборудования с возможностью фильтрации
+      responses:
+        "200":
+          description: Список оборудования
+  /tracking/equipment/{id}:
+    get:
+      tags:
+        - Tracking
+      summary: Получение информации об оборудовании
+      description: Возвращает детальную информацию о конкретном оборудовании
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация об оборудовании
+    put:
+      tags:
+        - Tracking
+      summary: Обновление информации об оборудовании
+      description: Обновляет данные о конкретном оборудовании
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Оборудование успешно обновлено
+    delete:
+      tags:
+        - Tracking
+      summary: Удаление оборудования из системы отслеживания
+      description: Удаляет оборудование из системы отслеживания
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Оборудование успешно удалено
+  /tracking/transfer:
+    post:
+      tags:
+        - Tracking
+      summary: Передача оборудования от одного держателя к другому
+      description: Создает запись о передаче оборудования между пользователями
+      responses:
+        "201":
+          description: Передача успешно создана
+  /tracking/transfer/history/{equipment_id}:
+    get:
+      tags:
+        - Tracking
+      summary: Получение истории передач оборудования
+      description: Возвращает список передач для конкретного оборудования
+      parameters:
+        - name: equipment_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: История передач оборудования
+  /tracking/blockchain/register:
+    post:
+      tags:
+        - Blockchain
+      summary: Регистрация оборудования в блокчейн
+      description: Создает запись об оборудовании в смарт-контракте на блокчейне
+      responses:
+        "200":
+          description: Оборудование успешно зарегистрировано в блокчейне
+  /tracking/blockchain/history/{equipment_id}:
+    get:
+      tags:
+        - Blockchain
+      summary: Получение истории передач из блокчейна
+      description: Возвращает историю передач оборудования из смарт-контракта
+      parameters:
+        - name: equipment_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: История передач из блокчейна
+
+  # Notification Service API Paths
+  /notifications/ping:
+    get:
+      tags:
+        - Notifications
+      summary: Проверка работоспособности Notification Service
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+  /notifications/api/notifications/user/{user_id}:
+    get:
+      tags:
+        - Notifications
+      summary: Получение уведомлений пользователя
+      description: Возвращает список уведомлений для конкретного пользователя
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список уведомлений пользователя
+  /notifications/api/notifications/count:
+    get:
+      tags:
+        - Notifications
+      summary: Получение количества непрочитанных уведомлений
+      description: Возвращает количество непрочитанных уведомлений для авторизованного пользователя
+      responses:
+        "200":
+          description: Количество непрочитанных уведомлений
+  /notifications/api/notifications/mark-read:
+    post:
+      tags:
+        - Notifications
+      summary: Отметка уведомлений как прочитанных
+      description: Отмечает указанные уведомления как прочитанные
+      responses:
+        "200":
+          description: Уведомления успешно отмечены как прочитанные
+  /notifications/api/notifications/create:
+    post:
+      tags:
+        - Notifications
+      summary: Создание нового уведомления
+      description: Создает новое уведомление для пользователя
+      responses:
+        "201":
+          description: Уведомление успешно создано
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

@@ -1,0 +1,758 @@
+openapi: 3.0.0
+info:
+  title: Tracking Service API
+  description: API для сервиса отслеживания перемещений оборудования с интеграцией блокчейн
+  version: 1.0.0
+servers:
+  - url: http://localhost:8002
+    description: Локальный сервер разработки
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Equipment:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Уникальный идентификатор оборудования
+        name:
+          type: string
+          description: Название оборудования
+        serialNumber:
+          type: string
+          description: Серийный номер оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        purchaseDate:
+          type: string
+          format: date-time
+          description: Дата покупки оборудования
+        warrantyExpiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [active, maintenance, decommissioned]
+          description: Статус оборудования
+        location:
+          type: string
+          description: Местоположение оборудования
+        currentHolderId:
+          type: string
+          nullable: true
+          description: Идентификатор текущего держателя оборудования
+        blockchainId:
+          type: string
+          nullable: true
+          description: Идентификатор оборудования в блокчейне
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updatedAt:
+          type: string
+          format: date-time
+          description: Дата и время обновления записи
+    Transfer:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Уникальный идентификатор передачи
+        equipmentId:
+          type: string
+          description: Идентификатор оборудования
+        fromHolderId:
+          type: string
+          nullable: true
+          description: Идентификатор предыдущего держателя
+        toHolderId:
+          type: string
+          description: Идентификатор нового держателя
+        transferDate:
+          type: string
+          format: date-time
+          description: Дата и время передачи
+        transferReason:
+          type: string
+          description: Причина передачи
+        blockchainTxId:
+          type: string
+          nullable: true
+          description: Идентификатор транзакции в блокчейне
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updatedAt:
+          type: string
+          format: date-time
+          description: Дата и время обновления записи
+    CreateEquipmentRequest:
+      type: object
+      required:
+        - name
+        - serialNumber
+        - category
+        - manufacturer
+        - purchaseDate
+        - location
+      properties:
+        name:
+          type: string
+          description: Название оборудования
+        serialNumber:
+          type: string
+          description: Серийный номер оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        purchaseDate:
+          type: string
+          format: date-time
+          description: Дата покупки оборудования
+        warrantyExpiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [active, maintenance, decommissioned]
+          default: active
+          description: Статус оборудования
+        location:
+          type: string
+          description: Местоположение оборудования
+        currentHolderId:
+          type: string
+          nullable: true
+          description: Идентификатор текущего держателя оборудования
+    UpdateEquipmentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        warrantyExpiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [active, maintenance, decommissioned]
+          description: Статус оборудования
+        location:
+          type: string
+          description: Местоположение оборудования
+    TransferRequest:
+      type: object
+      required:
+        - equipmentId
+        - toHolderId
+        - transferReason
+      properties:
+        equipmentId:
+          type: string
+          description: Идентификатор оборудования
+        fromHolderId:
+          type: string
+          description: Идентификатор текущего держателя (опционально, если указан в оборудовании)
+        toHolderId:
+          type: string
+          description: Идентификатор нового держателя
+        transferDate:
+          type: string
+          format: date-time
+          description: Дата и время передачи (по умолчанию текущее время)
+        transferReason:
+          type: string
+          description: Причина передачи
+    BlockchainRegisterRequest:
+      type: object
+      required:
+        - equipmentId
+      properties:
+        equipmentId:
+          type: string
+          description: Идентификатор оборудования
+    BlockchainTransferResponse:
+      type: object
+      properties:
+        equipmentId:
+          type: string
+          description: Идентификатор оборудования
+        blockchainId:
+          type: string
+          description: Идентификатор оборудования в блокчейне
+        transactionHash:
+          type: string
+          description: Хеш транзакции в блокчейне
+        timestamp:
+          type: string
+          format: date-time
+          description: Временная метка операции в блокчейне
+    BlockchainHistoryResponse:
+      type: object
+      properties:
+        equipmentId:
+          type: string
+          description: Идентификатор оборудования
+        blockchainId:
+          type: string
+          description: Идентификатор оборудования в блокчейне
+        transfers:
+          type: array
+          items:
+            type: object
+            properties:
+              from:
+                type: string
+                description: Адрес отправителя
+              to:
+                type: string
+                description: Адрес получателя
+              timestamp:
+                type: string
+                format: date-time
+                description: Временная метка операции
+              notes:
+                type: string
+                description: Заметки к передаче
+              transactionHash:
+                type: string
+                description: Хеш транзакции
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Текст ошибки
+        statusCode:
+          type: integer
+          description: HTTP статус код
+paths:
+  /equipment:
+    post:
+      summary: Регистрация нового оборудования для отслеживания
+      description: Создает новое оборудование в системе отслеживания
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEquipmentRequest"
+      responses:
+        "201":
+          description: Оборудование успешно создано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Equipment"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Оборудование с таким серийным номером уже существует
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      summary: Получение списка оборудования
+      description: Возвращает список оборудования с возможностью фильтрации
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (начиная с 1)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Количество записей на странице
+          schema:
+            type: integer
+            default: 10
+        - name: name
+          in: query
+          description: Фильтр по названию оборудования
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Фильтр по категории оборудования
+          schema:
+            type: string
+        - name: serialNumber
+          in: query
+          description: Фильтр по серийному номеру
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Фильтр по статусу
+          schema:
+            type: string
+            enum: [active, maintenance, decommissioned]
+        - name: manufacturer
+          in: query
+          description: Фильтр по производителю
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: Фильтр по местоположению
+          schema:
+            type: string
+        - name: currentHolderId
+          in: query
+          description: Фильтр по текущему держателю
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Поле для сортировки
+          schema:
+            type: string
+            default: createdAt
+        - name: order
+          in: query
+          description: Порядок сортировки
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        "200":
+          description: Список оборудования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  count:
+                    type: integer
+                    description: Общее количество найденных записей
+                  page:
+                    type: integer
+                    description: Текущая страница
+                  limit:
+                    type: integer
+                    description: Количество записей на странице
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Equipment"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /equipment/{id}:
+    get:
+      summary: Получение информации об оборудовании
+      description: Возвращает детальную информацию о конкретном оборудовании
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация об оборудовании
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Equipment"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Обновление информации об оборудовании
+      description: Обновляет данные о конкретном оборудовании
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEquipmentRequest"
+      responses:
+        "200":
+          description: Оборудование успешно обновлено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Equipment"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Удаление оборудования из системы отслеживания
+      description: Удаляет оборудование из системы отслеживания
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Оборудование успешно удалено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Оборудование успешно удалено
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Невозможно удалить оборудование, так как есть связанные передачи
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfer:
+    post:
+      summary: Передача оборудования от одного держателя к другому
+      description: Создает запись о передаче оборудования между пользователями
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequest"
+      responses:
+        "201":
+          description: Передача успешно создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Оборудование уже находится у указанного держателя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfer/history/{equipment_id}:
+    get:
+      summary: Получение истории передач оборудования
+      description: Возвращает список передач для конкретного оборудования
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: equipment_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы (начиная с 1)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Количество записей на странице
+          schema:
+            type: integer
+            default: 10
+        - name: sort
+          in: query
+          description: Поле для сортировки
+          schema:
+            type: string
+            default: transferDate
+        - name: order
+          in: query
+          description: Порядок сортировки
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        "200":
+          description: История передач оборудования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  count:
+                    type: integer
+                    description: Общее количество передач
+                  page:
+                    type: integer
+                    description: Текущая страница
+                  limit:
+                    type: integer
+                    description: Количество записей на странице
+                  equipment:
+                    $ref: "#/components/schemas/Equipment"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transfer"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /blockchain/register:
+    post:
+      summary: Регистрация оборудования в блокчейн
+      description: Создает запись об оборудовании в смарт-контракте на блокчейне
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlockchainRegisterRequest"
+      responses:
+        "200":
+          description: Оборудование успешно зарегистрировано в блокчейне
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/BlockchainTransferResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Оборудование уже зарегистрировано в блокчейне
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка взаимодействия с блокчейном
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /blockchain/history/{equipment_id}:
+    get:
+      summary: Получение истории передач из блокчейна
+      description: Возвращает историю передач оборудования из смарт-контракта
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: equipment_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: История передач из блокчейна
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/BlockchainHistoryResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено или не зарегистрировано в блокчейне
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка взаимодействия с блокчейном
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

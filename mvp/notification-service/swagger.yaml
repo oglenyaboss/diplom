@@ -1,0 +1,318 @@
+openapi: 3.0.0
+info:
+  title: Notification Service API
+  description: API для сервиса уведомлений
+  version: 1.0.0
+servers:
+  - url: http://localhost:8003
+    description: Локальный сервер разработки
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор уведомления
+        user_id:
+          type: string
+          description: Идентификатор пользователя, которому адресовано уведомление
+        type:
+          type: string
+          description: Тип уведомления
+          enum:
+            [
+              equipment_assigned,
+              equipment_transferred,
+              equipment_returned,
+              low_stock,
+              warranty_expiration,
+            ]
+        message:
+          type: string
+          description: Текст уведомления
+        related_to:
+          type: string
+          description: Идентификатор объекта, к которому относится уведомление (опционально)
+        is_read:
+          type: boolean
+          description: Флаг прочитано/не прочитано
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания уведомления
+    CreateNotificationRequest:
+      type: object
+      required:
+        - user_id
+        - type
+        - message
+      properties:
+        user_id:
+          type: string
+          description: Идентификатор пользователя
+        type:
+          type: string
+          description: Тип уведомления
+          enum:
+            [
+              equipment_assigned,
+              equipment_transferred,
+              equipment_returned,
+              low_stock,
+              warranty_expiration,
+            ]
+        message:
+          type: string
+          description: Текст уведомления
+        related_to:
+          type: string
+          description: Идентификатор объекта, к которому относится уведомление (опционально)
+    MarkReadRequest:
+      type: object
+      required:
+        - notification_ids
+      properties:
+        notification_ids:
+          type: array
+          items:
+            type: string
+          description: Массив идентификаторов уведомлений для отметки как прочитанные
+    UnreadCountResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Количество непрочитанных уведомлений
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Текст ошибки
+        status:
+          type: integer
+          description: HTTP статус код
+paths:
+  /ping:
+    get:
+      summary: Проверка работоспособности сервиса
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: notification
+  /api/notifications/user/{user_id}:
+    get:
+      summary: Получение уведомлений пользователя
+      description: Возвращает список уведомлений для конкретного пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы (начиная с 1)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Количество записей на странице
+          schema:
+            type: integer
+            default: 10
+        - name: is_read
+          in: query
+          description: Фильтр по статусу прочтения
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          description: Фильтр по типу уведомления
+          schema:
+            type: string
+            enum:
+              [
+                equipment_assigned,
+                equipment_transferred,
+                equipment_returned,
+                low_stock,
+                warranty_expiration,
+              ]
+        - name: sort_order
+          in: query
+          description: Порядок сортировки по дате создания
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        "200":
+          description: Список уведомлений пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Общее количество уведомлений
+                  page:
+                    type: integer
+                    description: Текущая страница
+                  limit:
+                    type: integer
+                    description: Количество записей на странице
+                  notifications:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, нельзя получить уведомления другого пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/notifications/count:
+    get:
+      summary: Получение количества непрочитанных уведомлений
+      description: Возвращает количество непрочитанных уведомлений для авторизованного пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Количество непрочитанных уведомлений
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnreadCountResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, нельзя получить информацию о уведомлениях другого пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/notifications/mark-read:
+    post:
+      summary: Отметка уведомлений как прочитанных
+      description: Отмечает указанные уведомления как прочитанные
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkReadRequest"
+      responses:
+        "200":
+          description: Уведомления успешно отмечены как прочитанные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Уведомления успешно отмечены как прочитанные
+                  count:
+                    type: integer
+                    description: Количество обновленных уведомлений
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, нельзя отметить уведомления другого пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/notifications/create:
+    post:
+      summary: Создание нового уведомления
+      description: Создает новое уведомление для пользователя
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNotificationRequest"
+      responses:
+        "201":
+          description: Уведомление успешно создано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Notification"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

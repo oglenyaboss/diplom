@@ -1,0 +1,630 @@
+openapi: 3.0.0
+info:
+  title: Warehouse Service API
+  description: API для сервиса управления складом и учета оборудования
+  version: 1.0.0
+servers:
+  - url: http://localhost:8001
+    description: Локальный сервер разработки
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    WarehouseItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор оборудования
+        name:
+          type: string
+          description: Название оборудования
+        serial_number:
+          type: string
+          description: Серийный номер оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        quantity:
+          type: integer
+          description: Количество единиц оборудования
+        min_quantity:
+          type: integer
+          description: Минимальное количество единиц оборудования на складе
+        location:
+          type: string
+          description: Местоположение оборудования на складе
+        purchase_date:
+          type: string
+          format: date-time
+          description: Дата покупки оборудования
+        warranty_expiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [available, reserved, unavailable]
+          description: Статус оборудования на складе
+        last_inventory:
+          type: string
+          format: date-time
+          description: Дата последней инвентаризации
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время обновления записи
+    InventoryTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор транзакции
+        item_id:
+          type: string
+          description: Идентификатор оборудования, к которому относится транзакция
+        transaction_type:
+          type: string
+          enum: [intake, issue, return, adjustment]
+          description: Тип транзакции
+        quantity:
+          type: integer
+          description: Количество единиц оборудования в транзакции
+        responsible_user:
+          type: string
+          description: Идентификатор ответственного пользователя
+        destination_user:
+          type: string
+          description: Идентификатор пользователя-получателя (при наличии)
+        reason:
+          type: string
+          description: Причина транзакции
+        date:
+          type: string
+          format: date-time
+          description: Дата и время транзакции
+        notes:
+          type: string
+          description: Дополнительные заметки к транзакции
+    CreateItemRequest:
+      type: object
+      required:
+        - name
+        - serial_number
+        - category
+        - quantity
+        - location
+      properties:
+        name:
+          type: string
+          description: Название оборудования
+        serial_number:
+          type: string
+          description: Серийный номер оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        quantity:
+          type: integer
+          description: Количество единиц оборудования
+        min_quantity:
+          type: integer
+          description: Минимальное количество единиц оборудования на складе
+        location:
+          type: string
+          description: Местоположение оборудования на складе
+        purchase_date:
+          type: string
+          format: date-time
+          description: Дата покупки оборудования
+        warranty_expiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [available, reserved, unavailable]
+          default: available
+          description: Статус оборудования на складе
+    UpdateItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название оборудования
+        category:
+          type: string
+          description: Категория оборудования
+        description:
+          type: string
+          description: Описание оборудования
+        manufacturer:
+          type: string
+          description: Производитель оборудования
+        quantity:
+          type: integer
+          description: Количество единиц оборудования
+        min_quantity:
+          type: integer
+          description: Минимальное количество единиц оборудования на складе
+        location:
+          type: string
+          description: Местоположение оборудования на складе
+        purchase_date:
+          type: string
+          format: date-time
+          description: Дата покупки оборудования
+        warranty_expiry:
+          type: string
+          format: date-time
+          description: Дата окончания гарантии
+        status:
+          type: string
+          enum: [available, reserved, unavailable]
+          description: Статус оборудования на складе
+    CreateTransactionRequest:
+      type: object
+      required:
+        - item_id
+        - transaction_type
+        - quantity
+        - responsible_user
+      properties:
+        item_id:
+          type: string
+          description: Идентификатор оборудования, к которому относится транзакция
+        transaction_type:
+          type: string
+          enum: [intake, issue, return, adjustment]
+          description: Тип транзакции
+        quantity:
+          type: integer
+          description: Количество единиц оборудования в транзакции
+        responsible_user:
+          type: string
+          description: Идентификатор ответственного пользователя
+        destination_user:
+          type: string
+          description: Идентификатор пользователя-получателя (при наличии)
+        reason:
+          type: string
+          description: Причина транзакции
+        notes:
+          type: string
+          description: Дополнительные заметки к транзакции
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Текст сообщения
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Текст ошибки
+        status:
+          type: integer
+          description: HTTP статус код
+paths:
+  /ping:
+    get:
+      summary: Проверка работоспособности сервиса
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: warehouse-service
+                  time:
+                    type: string
+                    format: date-time
+  /items:
+    post:
+      summary: Создание нового оборудования на складе
+      description: Добавляет новое оборудование в базу данных склада и создает начальную транзакцию прихода
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateItemRequest"
+      responses:
+        "201":
+          description: Оборудование успешно создано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  item:
+                    $ref: "#/components/schemas/WarehouseItem"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Оборудование с таким серийным номером уже существует
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      summary: Получение списка оборудования
+      description: Возвращает список оборудования на складе с возможностью фильтрации
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Ограничение количества результатов
+          schema:
+            type: integer
+            default: 50
+        - name: skip
+          in: query
+          description: Количество пропускаемых результатов (для пагинации)
+          schema:
+            type: integer
+            default: 0
+        - name: category
+          in: query
+          description: Фильтр по категории оборудования
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: Фильтр по местоположению
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Фильтр по статусу
+          schema:
+            type: string
+            enum: [available, reserved, unavailable]
+        - name: sort
+          in: query
+          description: Поле для сортировки
+          schema:
+            type: string
+            default: created_at
+        - name: search
+          in: query
+          description: Поисковый запрос (по названию или серийному номеру)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список оборудования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Общее количество оборудования
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WarehouseItem"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items/{id}:
+    get:
+      summary: Получение информации об оборудовании
+      description: Возвращает детальную информацию о конкретном оборудовании
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация об оборудовании
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseItem"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Обновление информации об оборудовании
+      description: Обновляет данные о конкретном оборудовании
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateItemRequest"
+      responses:
+        "200":
+          description: Оборудование успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseItem"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Удаление оборудования со склада
+      description: Удаляет оборудование из базы данных склада
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Оборудование успешно удалено
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Невозможно удалить оборудование, так как есть связанные транзакции
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transactions:
+    post:
+      summary: Создание новой транзакции
+      description: Добавляет новую транзакцию (приход/расход) оборудования
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransactionRequest"
+      responses:
+        "201":
+          description: Транзакция успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryTransaction"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Недостаточное количество оборудования на складе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      summary: Получение списка транзакций
+      description: Возвращает список транзакций с возможностью фильтрации
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Ограничение количества результатов
+          schema:
+            type: integer
+            default: 50
+        - name: skip
+          in: query
+          description: Количество пропускаемых результатов (для пагинации)
+          schema:
+            type: integer
+            default: 0
+        - name: transaction_type
+          in: query
+          description: Фильтр по типу транзакции
+          schema:
+            type: string
+            enum: [intake, issue, return, adjustment]
+        - name: responsible_user
+          in: query
+          description: Фильтр по ответственному пользователю
+          schema:
+            type: string
+        - name: destination_user
+          in: query
+          description: Фильтр по пользователю-получателю
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Поле для сортировки
+          schema:
+            type: string
+            default: date
+      responses:
+        "200":
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Общее количество транзакций
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/InventoryTransaction"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transactions/item/{item_id}:
+    get:
+      summary: Получение истории транзакций для оборудования
+      description: Возвращает список транзакций для конкретного оборудования
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Ограничение количества результатов
+          schema:
+            type: integer
+            default: 50
+        - name: skip
+          in: query
+          description: Количество пропускаемых результатов (для пагинации)
+          schema:
+            type: integer
+            default: 0
+        - name: transaction_type
+          in: query
+          description: Фильтр по типу транзакции
+          schema:
+            type: string
+            enum: [intake, issue, return, adjustment]
+      responses:
+        "200":
+          description: История транзакций для оборудования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: "#/components/schemas/WarehouseItem"
+                  total:
+                    type: integer
+                    description: Общее количество транзакций
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/InventoryTransaction"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

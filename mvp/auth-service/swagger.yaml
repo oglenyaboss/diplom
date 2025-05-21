@@ -1,0 +1,714 @@
+openapi: 3.0.0
+info:
+  title: Auth Service API
+  description: API для сервиса аутентификации, авторизации и управления пользователями
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Локальный сервер разработки
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор пользователя
+        username:
+          type: string
+          description: Логин пользователя
+        email:
+          type: string
+          description: Email пользователя
+        first_name:
+          type: string
+          description: Имя пользователя
+        last_name:
+          type: string
+          description: Фамилия пользователя
+        role:
+          type: string
+          enum: [admin, manager, warehouse, employee]
+          description: Роль пользователя в системе
+        department:
+          type: string
+          description: Отдел пользователя
+        position:
+          type: string
+          description: Должность пользователя
+        eth_address:
+          type: string
+          description: Ethereum адрес пользователя
+        is_active:
+          type: boolean
+          description: Статус активности пользователя
+        last_login:
+          type: string
+          format: date-time
+          description: Дата и время последнего входа
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания пользователя
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время обновления пользователя
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Логин пользователя
+        password:
+          type: string
+          format: password
+          description: Пароль пользователя
+    SignupRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - first_name
+        - last_name
+      properties:
+        username:
+          type: string
+          description: Логин пользователя
+        email:
+          type: string
+          format: email
+          description: Email пользователя
+        password:
+          type: string
+          format: password
+          description: Пароль пользователя (мин. 6 символов)
+        first_name:
+          type: string
+          description: Имя пользователя
+        last_name:
+          type: string
+          description: Фамилия пользователя
+        department:
+          type: string
+          description: Отдел пользователя
+        position:
+          type: string
+          description: Должность пользователя
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - first_name
+        - last_name
+      properties:
+        username:
+          type: string
+          description: Логин пользователя
+        email:
+          type: string
+          format: email
+          description: Email пользователя
+        password:
+          type: string
+          format: password
+          description: Пароль пользователя (мин. 6 символов)
+        first_name:
+          type: string
+          description: Имя пользователя
+        last_name:
+          type: string
+          description: Фамилия пользователя
+        department:
+          type: string
+          description: Отдел пользователя
+        position:
+          type: string
+          description: Должность пользователя
+        role:
+          type: string
+          enum: [admin, manager, warehouse, employee]
+          default: employee
+          description: Роль пользователя в системе
+        is_active:
+          type: boolean
+          default: true
+          description: Статус активности пользователя
+        eth_address:
+          type: string
+          description: Ethereum адрес пользователя (если не указан, будет сгенерирован автоматически)
+    RefreshRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          description: Refresh токен для обновления JWT
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT токен доступа
+        refresh_token:
+          type: string
+          description: Refresh токен для обновления JWT
+        expires_in:
+          type: integer
+          description: Срок действия токена в секундах
+        id:
+          type: string
+          description: Идентификатор пользователя
+        username:
+          type: string
+          description: Логин пользователя
+        role:
+          type: string
+          description: Роль пользователя
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Текст ошибки
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Текст сообщения
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: Имя пользователя
+        last_name:
+          type: string
+          description: Фамилия пользователя
+        email:
+          type: string
+          format: email
+          description: Email пользователя
+        department:
+          type: string
+          description: Отдел пользователя
+        position:
+          type: string
+          description: Должность пользователя
+        password:
+          type: string
+          format: password
+          description: Новый пароль пользователя
+    RoleUpdateRequest:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          enum: [admin, manager, warehouse, employee]
+          description: Новая роль пользователя
+    StatusUpdateRequest:
+      type: object
+      required:
+        - is_active
+      properties:
+        is_active:
+          type: boolean
+          description: Новый статус активности пользователя
+    EthAddressUpdateRequest:
+      type: object
+      required:
+        - eth_address
+      properties:
+        eth_address:
+          type: string
+          description: Новый Ethereum адрес пользователя
+    EthAddressResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: Идентификатор пользователя
+        eth_address:
+          type: string
+          description: Ethereum адрес пользователя
+paths:
+  /ping:
+    get:
+      summary: Проверка работоспособности сервиса
+      description: Возвращает статус 200, если сервис функционирует
+      responses:
+        "200":
+          description: Сервис работает нормально
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: auth-service
+                  time:
+                    type: string
+                    format: date-time
+  /signup:
+    post:
+      summary: Регистрация нового пользователя
+      description: Создает нового пользователя в системе с ролью "employee"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        "201":
+          description: Пользователь успешно создан
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Пользователь с таким логином или email уже существует
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /login:
+    post:
+      summary: Авторизация пользователя
+      description: Аутентификация пользователя по логину и паролю
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Неверные учетные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /refresh:
+    post:
+      summary: Обновление JWT токена
+      description: Получение нового JWT токена с помощью refresh токена
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Новый токен успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Недействительный refresh токен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /profile:
+    get:
+      summary: Получение профиля текущего пользователя
+      description: Возвращает данные профиля авторизованного пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Профиль пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Обновление профиля текущего пользователя
+      description: Обновляет данные профиля авторизованного пользователя (роль и статус изменить нельзя)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdateRequest"
+      responses:
+        "200":
+          description: Профиль успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users:
+    get:
+      summary: Получение списка всех пользователей
+      description: Возвращает список всех пользователей системы (только для администраторов)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Создание нового пользователя администратором
+      description: Администратор создает нового пользователя с указанной ролью
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: Пользователь успешно создан
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Пользователь с таким логином или email уже существует
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/{id}:
+    get:
+      summary: Получение информации о пользователе
+      description: Возвращает данные конкретного пользователя (для админов и менеджеров)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/{id}/role:
+    put:
+      summary: Изменение роли пользователя
+      description: Администратор изменяет роль пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleUpdateRequest"
+      responses:
+        "200":
+          description: Роль успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/{id}/status:
+    put:
+      summary: Изменение статуса пользователя
+      description: Администратор изменяет статус активности пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatusUpdateRequest"
+      responses:
+        "200":
+          description: Статус успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/{id}/eth-address:
+    put:
+      summary: Установка Ethereum адреса пользователя
+      description: Устанавливает Ethereum адрес пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EthAddressUpdateRequest"
+      responses:
+        "200":
+          description: Ethereum адрес успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /eth-address/{user_id}:
+    get:
+      summary: Получение Ethereum адреса пользователя
+      description: Возвращает Ethereum адрес указанного пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ethereum адрес пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EthAddressResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Доступ запрещен, недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Пользователь не найден или у пользователя нет Ethereum адреса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

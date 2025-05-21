@@ -1,0 +1,5 @@
+apis:
+  mvp/combined-swagger.yaml:
+    alias: warehouse-management-and-equipme
+  mvp/auth-service/swagger.yaml:
+    alias: auth-service-api
