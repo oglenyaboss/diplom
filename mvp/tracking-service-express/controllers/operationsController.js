@@ -6,10 +6,30 @@ const Transfer = require("../models/Transfer");
 // @access  Private
 const getRecentOperations = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit) || 5;
+  const { startDate, endDate, equipmentId } = req.query;
 
-  // Get recent transfers
-  const recentTransfers = await Transfer.find()
-    .sort({ createdAt: -1 })
+  // Подготовка фильтра для запроса
+  let filter = {};
+
+  // Фильтр по датам, если они указаны
+  if (startDate || endDate) {
+    filter.transferDate = {};
+    if (startDate) {
+      filter.transferDate.$gte = new Date(startDate);
+    }
+    if (endDate) {
+      filter.transferDate.$lte = new Date(endDate);
+    }
+  }
+
+  // Фильтр по оборудованию, если указан ID
+  if (equipmentId) {
+    filter.equipmentId = equipmentId;
+  }
+
+  // Get filtered transfers
+  const recentTransfers = await Transfer.find(filter)
+    .sort({ transferDate: -1 })
     .limit(limit)
     .populate({
       path: "equipmentId",

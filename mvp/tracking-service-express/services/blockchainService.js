@@ -385,6 +385,60 @@ const getBlockchainHistory = async (blockchainId) => {
   }
 };
 
+// Get blockchain status (for monitoring/health checks)
+const getBlockchainStatus = async () => {
+  try {
+    // Если блокчейн не инициализирован, возвращаем статус "отключено"
+    if (!blockchainContext) {
+      return {
+        connected: false,
+        chainId: null,
+        networkName: null,
+        contractAddress: null,
+        nodeUrl: process.env.ETH_NODE_URL || null,
+      };
+    }
+
+    const { provider, contract } = blockchainContext;
+
+    // Получаем информацию о сети
+    const network = await provider.getNetwork();
+
+    // Получаем имя сети
+    let networkName = "Unknown";
+    if (network.chainId === 1) networkName = "Ethereum Mainnet";
+    else if (network.chainId === 5) networkName = "Goerli Testnet";
+    else if (network.chainId === 11155111) networkName = "Sepolia Testnet";
+    else if (network.chainId === 31337) networkName = "Hardhat Local";
+    else if (network.name) networkName = network.name;
+    else networkName = `Chain ID: ${network.chainId}`;
+
+    // Адрес контракта
+    const contractAddress = contract.address;
+
+    // URL ноды
+    const nodeUrl = process.env.ETH_NODE_URL || "http://localhost:8545";
+
+    return {
+      connected: true,
+      chainId: network.chainId,
+      networkName,
+      contractAddress,
+      nodeUrl,
+    };
+  } catch (error) {
+    logger.error(`Error getting blockchain status: ${error.message}`);
+    return {
+      connected: false,
+      error: error.message,
+      chainId: null,
+      networkName: null,
+      contractAddress: null,
+      nodeUrl: process.env.ETH_NODE_URL || null,
+    };
+  }
+};
+
 // Initialize at module load time
 initializeBlockchain().catch((error) => {
   logger.error(`Failed to initialize blockchain: ${error.message}`);
@@ -394,4 +448,5 @@ module.exports = {
   registerInBlockchain,
   transferInBlockchain,
   getBlockchainHistory,
+  getBlockchainStatus,
 };

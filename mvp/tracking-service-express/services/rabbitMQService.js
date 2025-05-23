@@ -231,8 +231,17 @@ const closeRabbitMQ = async () => {
   }
 };
 
+/**
+ * Проверка соединения с RabbitMQ
+ * @returns {boolean} Статус соединения
+ */
+const isConnected = () => {
+  return connection !== null && connection.connection.serverProperties !== null;
+};
+
 module.exports = {
   initRabbitMQ,
   publishTransferMessage,
   closeRabbitMQ,
+  isConnected,
 };

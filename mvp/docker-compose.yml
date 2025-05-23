@@ -9,7 +9,8 @@ services:
       - JWT_SECRET=your_jwt_secret_key_for_mvp
       - PORT=8000
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     networks:
       - warehouse-network
     restart: on-failure
@@ -24,9 +25,12 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:8000
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
     depends_on:
-      - mongo
-      - rabbitmq
-      - auth-service
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      auth-service:
+        condition: service_started
     networks:
       - warehouse-network
     restart: on-failure
@@ -36,10 +40,10 @@ services:
       context: ./tracking-service-express
       dockerfile: Dockerfile
     ports:
-      - "8002:8080"
+      - "8002:8002"
     environment:
       - MONGO_URI=mongodb://mongo:27017/warehouse_tracking
-      - PORT=8080
+      - PORT=8002
       - AUTH_SERVICE_URL=http://auth-service:8000
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
       - ETH_NODE_URL=http://ethereum-node:8545
@@ -48,10 +52,14 @@ services:
     volumes:
       - contract_data:/usr/src/app/contracts
     depends_on:
-      - mongo
-      - rabbitmq
-      - auth-service
-      - ethereum-node
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      auth-service:
+        condition: service_started
+      ethereum-node:
+        condition: service_started
     networks:
       - warehouse-network
     restart: on-failure
@@ -65,8 +73,10 @@ services:
       - PORT=8003
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
     depends_on:
-      - mongo
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     networks:
       - warehouse-network
     restart: on-failure
@@ -75,6 +85,15 @@ services:
     build: ./frontend
     ports:
       - "80:80"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - WAREHOUSE_SERVICE_URL=http://warehouse-service:8001
+      - TRACKING_SERVICE_URL=http://tracking-service:8002
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8003
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8000
+      - NEXT_PUBLIC_WAREHOUSE_SERVICE_URL=http://localhost:8001
+      - NEXT_PUBLIC_TRACKING_SERVICE_URL=http://localhost:8080
+      - NEXT_PUBLIC_NOTIFICATION_SERVICE_URL=http://localhost:8003
     depends_on:
       - auth-service
       - warehouse-service
@@ -93,6 +112,11 @@ services:
       - mongo_data:/data/db
     networks:
       - warehouse-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -102,6 +126,11 @@ services:
       - "15672:15672"
     networks:
       - warehouse-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Простой локальный узел Ethereum для MVP
   ethereum-node:
@@ -118,6 +147,11 @@ services:
       --gasLimit 12000000
       --allowUnlimitedContractSize
       --db /data
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8545"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - ethereum_data:/data
     networks:

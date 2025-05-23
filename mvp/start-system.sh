@@ -38,7 +38,7 @@ if ! docker-compose ps | grep -q tracking-service; then
 fi
 
 echo -e "${YELLOW}Ожидание запуска Ethereum ноды...${NC}"
-sleep 10
+sleep 20
 
 echo -e "${YELLOW}Проверка статуса Ethereum контракта...${NC}"
 if docker-compose exec -T tracking-service test -f /usr/src/app/scripts/check-contract-updated.js 2>/dev/null; then

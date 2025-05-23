@@ -3,9 +3,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,12 +19,56 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Глобальные переменные
+var (
+	startTime     time.Time
+	serviceVersion string = "1.0.0" // Версия сервиса
+)
+
+// Инициализация времени запуска
+func init() {
+	startTime = time.Now()
+}
+
+// Форматирование времени работы
+func formatUptime(uptime float64) string {
+	days := int(uptime / (24 * 3600))
+	hours := int(uptime/3600) % 24
+	minutes := int(uptime/60) % 60
+	seconds := int(uptime) % 60
+
+	var parts []string
+	if days > 0 {
+		parts = append(parts, fmt.Sprintf("%dd", days))
+	}
+	if hours > 0 {
+		parts = append(parts, fmt.Sprintf("%dh", hours))
+	}
+	if minutes > 0 {
+		parts = append(parts, fmt.Sprintf("%dm", minutes))
+	}
+	if seconds > 0 || len(parts) == 0 {
+		parts = append(parts, fmt.Sprintf("%ds", seconds))
+	}
+
+	return strings.Join(parts, " ")
+}
+
+// Проверка состояния подключения к RabbitMQ
+func isRabbitConnected() bool {
+	if rabbitConn != nil && rabbitConn.IsClosed() == false {
+		return true
+	}
+	return false
+}
+
 type WarehouseItemRequest struct {
 	Name           string    `json:"name" binding:"required"`
 	SerialNumber   string    `json:"serial_number" binding:"required"`
 	Category       string    `json:"category" binding:"required"`
 	Description    string    `json:"description"`
 	Manufacturer   string    `json:"manufacturer"`
+	Price          float64   `json:"price"`
 	Quantity       int       `json:"quantity" binding:"required"`
 	MinQuantity    int       `json:"min_quantity"`
 	Location       string    `json:"location" binding:"required"`
@@ -36,6 +84,7 @@ type TransactionRequest struct {
 	DestinationUser string `json:"destination_user"`
 	Reason          string `json:"reason"`
 	Notes           string `json:"notes"`
+	ReceivedByName  string `json:"received_by_name"` // ФИО пользователя, который заполняет накладную
 }
 
 func main() {
@@ -69,12 +118,60 @@ func main() {
 		c.Next()
 	})
 
-	// Endpoint для проверки доступности сервиса
+	// Endpoint для проверки доступности сервиса с расширенной информацией
 	r.GET("/ping", func(c *gin.Context) {
+		// Получение информации о состоянии системы
+		var mem runtime.MemStats
+		runtime.ReadMemStats(&mem)
+
+		// Проверка состояния MongoDB
+		dbStatus := "connected"
+		dbConnected := true
+		
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		
+		err := mongoClient.Ping(ctx, nil)
+		if err != nil {
+			dbStatus = "disconnected"
+			dbConnected = false
+		}
+		
+		// Информация о RabbitMQ
+		rabbitConnected := isRabbitConnected()
+		
+		// Получаем путь к текущему исполняемому файлу
+		execPath, _ := os.Executable()
+		
+		// Вычисляем uptime
+		uptimeSeconds := time.Since(startTime).Seconds()
+		uptimeFormatted := formatUptime(uptimeSeconds)
+		
 		c.JSON(http.StatusOK, gin.H{
-			"status": "ok",
+			"status":  "ok",
 			"service": "warehouse-service",
-			"time": time.Now().Format(time.RFC3339),
+			"version": serviceVersion,
+			"time":    time.Now().Format(time.RFC3339),
+			"uptime": gin.H{
+				"seconds":   uptimeSeconds,
+				"formatted": uptimeFormatted,
+			},
+			"system": gin.H{
+				"platform":    runtime.GOOS,
+				"goVersion":   runtime.Version(),
+				"memory": gin.H{
+					"free":  fmt.Sprintf("%d MB", mem.HeapIdle/1024/1024),
+					"total": fmt.Sprintf("%d MB", mem.HeapSys/1024/1024),
+				},
+				"execPath": execPath,
+			},
+			"database": gin.H{
+				"connected": dbConnected,
+				"readyState": dbStatus,
+			},
+			"rabbitMQ": gin.H{
+				"connected": rabbitConnected,
+			},
 		})
 	})
 
@@ -89,6 +186,12 @@ func main() {
 	r.POST("/transactions", createTransaction)
 	r.GET("/transactions", listTransactions)
 	r.GET("/transactions/item/:item_id", getItemTransactions)
+
+	// Endpoints для работы с накладными
+	r.POST("/invoices", createInvoice)
+	r.GET("/invoices", listInvoices)
+	r.GET("/invoices/:id", getInvoice)
+	r.GET("/transactions/without-invoices", getTransactionsWithoutInvoices)
 
 	log.Println("Starting warehouse service on port 8001...")
 	r.Run(":8001")
@@ -110,6 +213,7 @@ func createWarehouseItem(c *gin.Context) {
 		Category:       req.Category,
 		Description:    req.Description,
 		Manufacturer:   req.Manufacturer,
+		Price:          req.Price,
 		Quantity:       req.Quantity,
 		MinQuantity:    req.MinQuantity,
 		Location:       req.Location,
@@ -428,6 +532,26 @@ func createTransaction(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process transaction: " + err.Error()})
 		return
 	}
+
+	// После успешного создания транзакции, проверяем наличие накладной
+	// и отправляем уведомление, если накладная не создана
+	go func(transactionID primitive.ObjectID, transactionType string) {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		
+		exists, err := checkInvoiceExists(ctx, transactionID)
+		if err != nil {
+			log.Printf("Error checking invoice existence: %v", err)
+			return
+		}
+		
+		if !exists {
+			// Если накладная не найдена, отправляем уведомление
+			if err := sendInvoiceRequiredNotification(transactionID, transactionType); err != nil {
+				log.Printf("Failed to send invoice required notification: %v", err)
+			}
+		}
+	}(transaction.ID, req.TransactionType)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Transaction created successfully",

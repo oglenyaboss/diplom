@@ -1,0 +1,44 @@
+Date : 2025-05-21 18:03:08
+Directory : /Users/dog/WebstormProjects/diplom/mvp
+Total : 10 files,  -3231 codes, -4 comments, -211 blanks, all -3446 lines
+
+Languages
++--------------+------------+------------+------------+------------+------------+
+| language     | files      | code       | comment    | blank      | total      |
++--------------+------------+------------+------------+------------+------------+
+| YAML         |          1 |         -5 |          0 |         -1 |         -6 |
+| Shell Script |          1 |         -7 |         -4 |         -4 |        -15 |
+| Markdown     |          6 |       -843 |          0 |       -206 |     -1,049 |
+| JSON         |          2 |     -2,376 |          0 |          0 |     -2,376 |
++--------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                           |         10 |     -3,231 |         -4 |       -211 |     -3,446 |
+| ..                                                                                          |         10 |     -3,231 |         -4 |       -211 |     -3,446 |
+| .. (Files)                                                                                  |          7 |       -850 |         -4 |       -210 |     -1,064 |
+| ../.42c                                                                                     |          3 |     -2,381 |          0 |         -1 |     -2,382 |
+| ../.42c (Files)                                                                             |          1 |         -5 |          0 |         -1 |         -6 |
+| ../.42c/scan                                                                                |          2 |     -2,376 |          0 |          0 |     -2,376 |
+| ../.42c/scan/auth-service-api                                                               |          1 |       -862 |          0 |          0 |       -862 |
+| ../.42c/scan/warehouse-management-and-equipme                                               |          1 |     -1,514 |          0 |          0 |     -1,514 |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+
+| filename                                                                                    | language     | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+
+| /Users/dog/WebstormProjects/diplom/.42c/conf.yaml                                           | YAML         |         -5 |          0 |         -1 |         -6 |
+| /Users/dog/WebstormProjects/diplom/.42c/scan/auth-service-api/scanconf.json                 | JSON         |       -862 |          0 |          0 |       -862 |
+| /Users/dog/WebstormProjects/diplom/.42c/scan/warehouse-management-and-equipme/scanconf.json | JSON         |     -1,514 |          0 |          0 |     -1,514 |
+| /Users/dog/WebstormProjects/diplom/api-gateway.md                                           | Markdown     |         -8 |          0 |         -1 |         -9 |
+| /Users/dog/WebstormProjects/diplom/asdasd.md                                                | Markdown     |        -30 |          0 |         -4 |        -34 |
+| /Users/dog/WebstormProjects/diplom/flowchart.md                                             | Markdown     |        -19 |          0 |         -2 |        -21 |
+| /Users/dog/WebstormProjects/diplom/graph.md                                                 | Markdown     |        -30 |          0 |         -6 |        -36 |
+| /Users/dog/WebstormProjects/diplom/graphasd.md                                              | Markdown     |       -136 |          0 |        -36 |       -172 |
+| /Users/dog/WebstormProjects/diplom/start-frontend.sh                                        | Shell Script |         -7 |         -4 |         -4 |        -15 |
+| /Users/dog/WebstormProjects/diplom/проектирование.md                                        | Markdown     |       -620 |          0 |       -157 |       -777 |
+| Total                                                                                       |              |     -3,231 |         -4 |       -211 |     -3,446 |
++---------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+

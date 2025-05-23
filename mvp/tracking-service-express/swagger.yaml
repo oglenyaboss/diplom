@@ -87,7 +87,6 @@ components:
           format: date-time
           description: Дата и время обновления записи
           example: "2024-01-15T15:30:45Z"
-
     Transfer:
       type: object
       required:
@@ -138,7 +137,6 @@ components:
           format: date-time
           description: Дата и время обновления записи
           example: "2024-05-10T14:30:05Z"
-
     Operation:
       type: object
       properties:
@@ -181,7 +179,6 @@ components:
           nullable: true
           description: Идентификатор транзакции в блокчейне
           example: "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
-
     CreateEquipmentRequest:
       type: object
       required:
@@ -237,7 +234,6 @@ components:
           nullable: true
           description: Идентификатор текущего держателя оборудования
           example: "user_123456"
-
     UpdateEquipmentRequest:
       type: object
       properties:
@@ -275,7 +271,6 @@ components:
           type: string
           description: Идентификатор текущего держателя (не рекомендуется - вместо этого используйте API передачи)
           example: "user_789012"
-
     TransferRequest:
       type: object
       required:
@@ -299,7 +294,6 @@ components:
           type: string
           description: Причина передачи
           example: "Начало производственного процесса"
-
     BlockchainRegisterRequest:
       type: object
       required:
@@ -309,7 +303,6 @@ components:
           type: string
           description: Идентификатор оборудования
           example: "60d21b4667d0d8992e610c85"
-
     BlockchainTransferResponse:
       type: object
       properties:
@@ -330,7 +323,6 @@ components:
           format: date-time
           description: Временная метка операции в блокчейне
           example: "2024-05-10T14:30:05Z"
-
     BlockchainHistoryResponse:
       type: object
       properties:
@@ -368,7 +360,6 @@ components:
                 type: string
                 description: Хеш транзакции
                 example: "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
-
     MessageResponse:
       type: object
       properties:
@@ -376,7 +367,6 @@ components:
           type: string
           description: Сообщение о результате операции
           example: "Операция выполнена успешно"
-
     ErrorResponse:
       type: object
       properties:
@@ -391,8 +381,78 @@ components:
           type: integer
           description: HTTP статус код
           example: 400
-
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор отчета
+        report_type:
+          type: string
+          description: Тип отчета (например, "inventory_summary", "movement_history")
+        generated_at:
+          type: string
+          format: date-time
+          description: Дата и время генерации отчета
+        generated_by:
+          type: string
+          description: Идентификатор пользователя, сгенерировавшего отчет
+        filters:
+          type: object
+          description: Фильтры, использованные для генерации отчета
+        data:
+          type: object # Или array, в зависимости от структуры отчета
+          description: Данные отчета
+    CreateReportRequest:
+      type: object
+      required:
+        - report_type
+      properties:
+        report_type:
+          type: string
+          description: Тип отчета для генерации
+        filters:
+          type: object
+          description: Параметры и фильтры для генерации отчета (например, date_range, equipment_id)
+        output_format:
+          type: string
+          enum: [json, pdf, csv]
+          description: Формат вывода отчета
+          default: json
 paths:
+  /ping:
+    get:
+      summary: Проверка работоспособности сервиса
+      description: Возвращает информацию о статусе сервиса
+      tags:
+        - Статус
+      responses:
+        "200":
+          description: Сервис работает нормально
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Tracking service is running"
+                  status:
+                    type: string
+                    example: "OK"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-05-21T10:00:00Z"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  database_status:
+                    type: string
+                    example: "connected"
+                  blockchain_node_status:
+                    type: string
+                    example: "connected"
   /equipment:
     post:
       summary: Регистрация нового оборудования для отслеживания
@@ -473,7 +533,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
   /equipment/{id}:
     get:
       summary: Получение информации об оборудовании
@@ -508,10 +567,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
     put:
       summary: Обновление информации об оборудовании
-      description: Обновляет данные о конкретном оборудовании (кроме серийного номера)
+      description: Обновляет данные о конкретном оборудовании. Не используйте для изменения current_holder_id - для этого есть отдельный эндпоинт /transfers.
       security:
         - bearerAuth: []
       tags:
@@ -535,11 +593,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Equipment updated successfully"
+                $ref: "#/components/schemas/Equipment"
         "400":
           description: Некорректные данные запроса
           content:
@@ -558,10 +612,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
     delete:
       summary: Удаление оборудования из системы отслеживания
-      description: Удаляет оборудование из системы отслеживания (возможно только при отсутствии истории передач)
+      description: Удаляет оборудование из системы. Рекомендуется использовать только для ошибочно созданных записей.
       security:
         - bearerAuth: []
       tags:
@@ -592,17 +645,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "409":
-          description: Невозможно удалить оборудование, так как есть связанные передачи
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-  /transfer:
+  /transfers:
     post:
-      summary: Передача оборудования от одного держателя к другому
-      description: Создает запись о передаче оборудования между пользователями и обновляет текущего держателя
+      summary: Регистрация передачи оборудования
+      description: Создает запись о передаче оборудования от одного держателя другому и обновляет current_holder_id у оборудования.
       security:
         - bearerAuth: []
       tags:
@@ -614,8 +660,8 @@ paths:
             schema:
               $ref: "#/components/schemas/TransferRequest"
       responses:
-        "200":
-          description: Передача успешно создана
+        "201":
+          description: Передача успешно зарегистрирована
           content:
             application/json:
               schema:
@@ -623,11 +669,11 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Equipment transferred successfully"
+                    example: "Transfer registered successfully"
                   transfer:
                     $ref: "#/components/schemas/Transfer"
         "400":
-          description: Некорректные данные запроса или неверный текущий держатель
+          description: Некорректные данные запроса
           content:
             application/json:
               schema:
@@ -639,20 +685,91 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
         "404":
-          description: Оборудование не найдено
+          description: Оборудование или пользователь не найдены
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /transfer/history/{equipment_id}:
     get:
-      summary: Получение истории передач оборудования
-      description: Возвращает список передач для конкретного оборудования в хронологическом порядке
+      summary: Получение списка передач оборудования
+      description: Возвращает список всех передач оборудования с возможностью фильтрации.
       security:
         - bearerAuth: []
       tags:
         - Передачи
+      parameters:
+        - name: equipment_id
+          in: query
+          description: Фильтр по ID оборудования
+          schema:
+            type: string
+        - name: from_holder_id
+          in: query
+          description: Фильтр по ID отправителя
+          schema:
+            type: string
+        - name: to_holder_id
+          in: query
+          description: Фильтр по ID получателя
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список передач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transfer"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers/{id}:
+    get:
+      summary: Получение информации о передаче
+      description: Возвращает детальную информацию о конкретной передаче по ее идентификатору.
+      security:
+        - bearerAuth: []
+      tags:
+        - Передачи
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор передачи
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация о передаче
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Передача не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /operations/equipment/{equipment_id}:
+    get:
+      summary: Получение истории операций по оборудованию
+      description: Возвращает полную историю операций (регистрация, передачи) для конкретного оборудования.
+      security:
+        - bearerAuth: []
+      tags:
+        - Операции
       parameters:
         - name: equipment_id
           in: path
@@ -662,16 +779,13 @@ paths:
             type: string
       responses:
         "200":
-          description: История передач оборудования
+          description: История операций по оборудованию
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  history:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Transfer"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Operation" # Это может быть объединение Equipment и Transfer
         "401":
           description: Пользователь не авторизован
           content:
@@ -684,11 +798,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
   /blockchain/register:
     post:
-      summary: Регистрация оборудования в блокчейн
-      description: Создает запись об оборудовании в смарт-контракте на блокчейне
+      summary: Регистрация оборудования в блокчейне
+      description: Регистрирует существующее оборудование в блокчейн-сети.
       security:
         - bearerAuth: []
       tags:
@@ -705,19 +818,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Equipment successfully registered in blockchain"
-                  equipment_id:
-                    type: string
-                    example: "60d21b4667d0d8992e610c85"
-                  blockchain_id:
-                    type: string
-                    example: "0x1234567890abcdef1234567890abcdef12345678"
+                $ref: "#/components/schemas/BlockchainTransferResponse" # Используем схожую структуру ответа
         "400":
-          description: Некорректные данные запроса или оборудование уже зарегистрировано в блокчейне
+          description: Некорректные данные запроса или оборудование уже зарегистрировано
           content:
             application/json:
               schema:
@@ -735,16 +838,60 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
         "500":
-          description: Ошибка взаимодействия с блокчейном
+          description: Ошибка при взаимодействии с блокчейном
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
+  /blockchain/transfer:
+    post:
+      summary: Регистрация передачи оборудования в блокчейне
+      description: Регистрирует передачу оборудования в блокчейн-сети.
+      security:
+        - bearerAuth: []
+      tags:
+        - Блокчейн
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequest" # Используем ту же схему, что и для обычных передач
+      responses:
+        "200":
+          description: Передача успешно зарегистрирована в блокчейне
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockchainTransferResponse"
+        "400":
+          description: Некорректные данные запроса или оборудование не зарегистрировано в блокчейне
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Оборудование или пользователь не найдены
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Ошибка при взаимодействии с блокчейном
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /blockchain/history/{equipment_id}:
     get:
-      summary: Получение истории передач из блокчейна
-      description: Возвращает историю передач оборудования из смарт-контракта
+      summary: Получение истории передач оборудования из блокчейна
+      description: Возвращает историю передач для конкретного оборудования, записанную в блокчейне.
       security:
         - bearerAuth: []
       tags:
@@ -753,7 +900,7 @@ paths:
         - name: equipment_id
           in: path
           required: true
-          description: Идентификатор оборудования
+          description: Идентификатор оборудования в системе (не blockchain_id)
           schema:
             type: string
       responses:
@@ -776,67 +923,141 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
         "500":
-          description: Ошибка взаимодействия с блокчейном
+          description: Ошибка при взаимодействии с блокчейном
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /operations/recent:
-    get:
-      summary: Получение недавних операций
-      description: Возвращает список последних операций с оборудованием (передачи)
+  /reports:
+    post:
+      summary: Создание нового отчета
+      description: Создает новый отчет в системе на основе указанных параметров
       security:
         - bearerAuth: []
       tags:
-        - Операции
-      parameters:
-        - name: limit
-          in: query
-          description: Ограничение количества возвращаемых операций
-          schema:
-            type: integer
-            default: 5
+        - Отчеты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReportRequest"
       responses:
-        "200":
-          description: Список недавних операций
+        "201":
+          description: Отчет успешно создан (или запущен процесс генерации)
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  operations:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Operation"
+                $ref: "#/components/schemas/Report"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "401":
           description: Пользователь не авторизован
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /ping:
     get:
-      summary: Проверка работоспособности сервиса
-      description: Возвращает статус работоспособности сервиса и текущее время
+      summary: Получение списка отчетов
+      description: Возвращает список сгенерированных отчетов
+      security:
+        - bearerAuth: []
       tags:
-        - Системные
+        - Отчеты
+      parameters:
+        - name: report_type
+          in: query
+          description: Фильтр по типу отчета
+          schema:
+            type: string
+        - name: generated_by
+          in: query
+          description: Фильтр по ID пользователя, сгенерировавшего отчет
+          schema:
+            type: string
       responses:
         "200":
-          description: Сервис работает нормально
+          description: Список отчетов
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "ok"
-                  service:
-                    type: string
-                    example: "tracking-service"
-                  time:
-                    type: string
-                    format: date-time
-                    example: "2024-05-20T12:34:56Z"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /reports/{id}:
+    get:
+      summary: Получение информации об отчете
+      description: Возвращает детальную информацию о конкретном отчете по его ID
+      security:
+        - bearerAuth: []
+      tags:
+        - Отчеты
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор отчета
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация об отчете
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Отчет не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Удаление отчета
+      description: Удаляет отчет из системы
+      security:
+        - bearerAuth: []
+      tags:
+        - Отчеты
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор отчета
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Отчет успешно удален
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Отчет не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

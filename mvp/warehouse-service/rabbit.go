@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -18,9 +19,12 @@ var (
 
 // Константы для обмена сообщениями
 const (
-	ExchangeName      = "warehouse_exchange"
-	EquipmentKey      = "equipment.created"
-	EquipmentQueueName = "equipment_created_queue"
+	ExchangeName        = "warehouse_exchange"
+	EquipmentKey        = "equipment.created"
+	EquipmentQueueName  = "equipment_created_queue"
+	InvoiceCreatedKey   = "invoice.created"
+	InvoiceRequiredKey  = "invoice.required"
+	InvoiceQueueName    = "invoice_notifications_queue"
 )
 
 // Сообщение о создании оборудования
@@ -78,7 +82,7 @@ func initRabbitMQ() error {
 		return err
 	}
 
-	// Объявление очереди
+	// Объявление очереди для оборудования
 	q, err := ch.QueueDeclare(
 		EquipmentQueueName, // name
 		true,              // durable
@@ -98,26 +102,65 @@ func initRabbitMQ() error {
 		q.Name,        // queue name
 		EquipmentKey,  // routing key
 		ExchangeName,  // exchange
-		false,         // no-wait
-		nil,           // arguments
+		false,        // no-wait
+		nil,          // arguments
 	)
 	if err != nil {
-		log.Printf("Failed to bind a queue: %v", err)
+		log.Printf("Failed to bind queue: %v", err)
 		return err
 	}
 
-	log.Println("RabbitMQ initialized successfully")
+	// Объявление очереди для уведомлений о накладных
+	invoiceQueue, err := ch.QueueDeclare(
+		InvoiceQueueName, // name
+		true,            // durable
+		false,           // delete when unused
+		false,           // exclusive
+		false,           // no-wait
+		nil,             // arguments
+	)
+	if err != nil {
+		log.Printf("Failed to declare invoice queue: %v", err)
+		return err
+	}
+
+	// Связывание очереди уведомлений с обменом для созданных накладных
+	err = ch.QueueBind(
+		invoiceQueue.Name,  // queue name
+		InvoiceCreatedKey,  // routing key
+		ExchangeName,       // exchange
+		false,              // no-wait
+		nil,                // arguments
+	)
+	if err != nil {
+		log.Printf("Failed to bind invoice queue: %v", err)
+		return err
+	}
+
+	// Связывание очереди уведомлений с обменом для требуемых накладных
+	err = ch.QueueBind(
+		invoiceQueue.Name,     // queue name
+		InvoiceRequiredKey,    // routing key
+		ExchangeName,          // exchange
+		false,                 // no-wait
+		nil,                   // arguments
+	)
+	if err != nil {
+		log.Printf("Failed to bind invoice required queue: %v", err)
+		return err
+	}
+
 	return nil
 }
 
-// Публикация сообщения о создании оборудования
+// Отправка уведомления о создании оборудования
 func publishEquipmentCreated(item WarehouseItem) error {
-	if rabbitChannel == nil {
-		log.Println("RabbitMQ channel is not initialized")
-		return nil // Просто логируем и продолжаем, если RabbitMQ недоступен
+	if rabbitConn == nil || rabbitConn.IsClosed() || rabbitChannel == nil {
+		log.Println("RabbitMQ connection not available, skipping message publication")
+		return fmt.Errorf("RabbitMQ connection not available")
 	}
 
-	// Подготовка сообщения
+	// Создаем сообщение для RabbitMQ
 	message := EquipmentCreatedMessage{
 		ID:              item.ID.Hex(),
 		Name:            item.Name,
@@ -167,4 +210,38 @@ func closeRabbitMQ() {
 	if rabbitConn != nil {
 		rabbitConn.Close()
 	}
+}
+
+// Публикация уведомления в RabbitMQ
+func publishNotification(routingKey string, message interface{}) error {
+	if rabbitChannel == nil {
+		log.Println("RabbitMQ channel is not initialized")
+		return fmt.Errorf("RabbitMQ channel is not initialized")
+	}
+
+	// Сериализация в JSON
+	body, err := json.Marshal(message)
+	if err != nil {
+		log.Printf("Failed to marshal notification message: %v", err)
+		return err
+	}
+
+	// Публикация сообщения
+	err = rabbitChannel.Publish(
+		ExchangeName, // exchange
+		routingKey,   // routing key
+		false,        // mandatory
+		false,        // immediate
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        body,
+		})
+	
+	if err != nil {
+		log.Printf("Failed to publish notification: %v", err)
+		return err
+	}
+
+	log.Printf("Published notification with routing key: %s", routingKey)
+	return nil
 }

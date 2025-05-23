@@ -34,6 +34,10 @@ components:
         manufacturer:
           type: string
           description: Производитель оборудования
+        price:
+          type: number
+          format: float
+          description: Стоимость единицы оборудования
         quantity:
           type: integer
           description: Количество единиц оборудования
@@ -123,6 +127,10 @@ components:
         manufacturer:
           type: string
           description: Производитель оборудования
+        price:
+          type: number
+          format: float
+          description: Стоимость единицы оборудования
         quantity:
           type: integer
           description: Количество единиц оборудования
@@ -226,11 +234,54 @@ components:
         status:
           type: integer
           description: HTTP статус код
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор накладной
+        transaction_ids:
+          type: array
+          items:
+            type: string
+          description: Список ID транзакций, включенных в накладную
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания накладной
+        responsible_user:
+          type: string
+          description: Идентификатор пользователя, создавшего накладную
+        status:
+          type: string
+          enum: [new, processing, completed, cancelled]
+          description: Статус накладной
+          default: new
+        notes:
+          type: string
+          description: Примечания к накладной
+    CreateInvoiceRequest:
+      type: object
+      required:
+        - transaction_ids
+        - responsible_user
+      properties:
+        transaction_ids:
+          type: array
+          items:
+            type: string
+          description: Список ID транзакций для включения в накладную
+        responsible_user:
+          type: string
+          description: Идентификатор пользователя, создающего накладную
+        notes:
+          type: string
+          description: Примечания к накладной
 paths:
   /ping:
     get:
       summary: Проверка работоспособности сервиса
-      description: Возвращает статус 200, если сервис функционирует
+      description: Возвращает расширенную информацию о статусе сервиса, включая данные о базе данных и RabbitMQ
       responses:
         "200":
           description: Сервис работает нормально
@@ -245,9 +296,68 @@ paths:
                   service:
                     type: string
                     example: warehouse-service
+                  version:
+                    type: string
+                    example: 1.0.0
                   time:
                     type: string
                     format: date-time
+                    example: "2025-05-21T07:04:32Z"
+                  uptime:
+                    type: object
+                    properties:
+                      seconds:
+                        type: number
+                        description: Время работы сервиса в секундах
+                        example: 3600
+                      formatted:
+                        type: string
+                        description: Отформатированное время работы сервиса
+                        example: "1h"
+                  system:
+                    type: object
+                    properties:
+                      platform:
+                        type: string
+                        description: Платформа операционной системы
+                        example: "linux"
+                      goVersion:
+                        type: string
+                        description: Версия Go
+                        example: "go1.18.1"
+                      memory:
+                        type: object
+                        properties:
+                          free:
+                            type: string
+                            description: Свободная память
+                            example: "200 MB"
+                          total:
+                            type: string
+                            description: Общая память
+                            example: "500 MB"
+                      execPath:
+                        type: string
+                        description: Путь к исполняемому файлу
+                        example: "/app/warehouse-service"
+                  database:
+                    type: object
+                    properties:
+                      connected:
+                        type: boolean
+                        description: Статус подключения к базе данных
+                        example: true
+                      readyState:
+                        type: string
+                        description: Состояние подключения к базе данных
+                        example: "connected"
+                  rabbitMQ:
+                    type: object
+                    properties:
+                      connected:
+                        type: boolean
+                        description: Статус подключения к RabbitMQ
+                        example: true
   /items:
     post:
       summary: Создание нового оборудования на складе
@@ -444,8 +554,12 @@ paths:
           schema:
             type: string
       responses:
-        "204":
+        "200":
           description: Оборудование успешно удалено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
         "401":
           description: Пользователь не авторизован
           content:
@@ -458,16 +572,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "409":
-          description: Невозможно удалить оборудование, так как есть связанные транзакции
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
   /transactions:
     post:
       summary: Создание новой транзакции
-      description: Добавляет новую транзакцию (приход/расход) оборудования
+      description: Регистрирует новую транзакцию (приход, расход, возврат, корректировка)
       security:
         - bearerAuth: []
       requestBody:
@@ -501,30 +609,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "422":
-          description: Недостаточное количество оборудования на складе
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
     get:
       summary: Получение списка транзакций
-      description: Возвращает список транзакций с возможностью фильтрации
+      description: Возвращает список всех транзакций с возможностью фильтрации
       security:
         - bearerAuth: []
       parameters:
-        - name: limit
+        - name: item_id
           in: query
-          description: Ограничение количества результатов
+          description: Фильтр по идентификатору оборудования
           schema:
-            type: integer
-            default: 50
-        - name: skip
-          in: query
-          description: Количество пропускаемых результатов (для пагинации)
-          schema:
-            type: integer
-            default: 0
+            type: string
         - name: transaction_type
           in: query
           description: Фильтр по типу транзакции
@@ -536,51 +631,6 @@ paths:
           description: Фильтр по ответственному пользователю
           schema:
             type: string
-        - name: destination_user
-          in: query
-          description: Фильтр по пользователю-получателю
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: Поле для сортировки
-          schema:
-            type: string
-            default: date
-      responses:
-        "200":
-          description: Список транзакций
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  total:
-                    type: integer
-                    description: Общее количество транзакций
-                  transactions:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/InventoryTransaction"
-        "401":
-          description: Пользователь не авторизован
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-  /transactions/item/{item_id}:
-    get:
-      summary: Получение истории транзакций для оборудования
-      description: Возвращает список транзакций для конкретного оборудования
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: item_id
-          in: path
-          required: true
-          description: Идентификатор оборудования
-          schema:
-            type: string
         - name: limit
           in: query
           description: Ограничение количества результатов
@@ -593,29 +643,43 @@ paths:
           schema:
             type: integer
             default: 0
-        - name: transaction_type
-          in: query
-          description: Фильтр по типу транзакции
-          schema:
-            type: string
-            enum: [intake, issue, return, adjustment]
       responses:
         "200":
-          description: История транзакций для оборудования
+          description: Список транзакций
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  item:
-                    $ref: "#/components/schemas/WarehouseItem"
-                  total:
-                    type: integer
-                    description: Общее количество транзакций
-                  transactions:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/InventoryTransaction"
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryTransaction"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transactions/item/{item_id}:
+    get:
+      summary: Получение транзакций по конкретному оборудованию
+      description: Возвращает список всех транзакций для указанного оборудования
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          description: Идентификатор оборудования
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список транзакций для оборудования
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryTransaction"
         "401":
           description: Пользователь не авторизован
           content:
@@ -624,6 +688,110 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Оборудование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /invoices:
+    post:
+      summary: Создание новой накладной
+      description: Создает новую накладную на основе транзакций
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInvoiceRequest"
+      responses:
+        "201":
+          description: Накладная успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "400":
+          description: Некорректные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      summary: Получение списка накладных
+      description: Возвращает список всех накладных
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список накладных
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invoice"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /invoices/{id}:
+    get:
+      summary: Получение информации о накладной
+      description: Возвращает детальную информацию о конкретной накладной
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор накладной
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация о накладной
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "401":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Накладная не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transactions/without-invoices:
+    get:
+      summary: Получение транзакций без накладных
+      description: Возвращает список транзакций, для которых еще не созданы накладные
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список транзакций без накладных
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryTransaction"
+        "401":
+          description: Пользователь не авторизован
           content:
             application/json:
               schema:

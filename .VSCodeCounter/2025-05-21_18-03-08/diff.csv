@@ -1,0 +1,12 @@
+"filename", "language", "Markdown", "Shell Script", "JSON", "YAML", "comment", "blank", "total"
+"/Users/dog/WebstormProjects/diplom/.42c/conf.yaml", "YAML", 0, 0, 0, -5, 0, -1, -6
+"/Users/dog/WebstormProjects/diplom/.42c/scan/auth-service-api/scanconf.json", "JSON", 0, 0, -862, 0, 0, 0, -862
+"/Users/dog/WebstormProjects/diplom/.42c/scan/warehouse-management-and-equipme/scanconf.json", "JSON", 0, 0, -1514, 0, 0, 0, -1514
+"/Users/dog/WebstormProjects/diplom/api-gateway.md", "Markdown", -8, 0, 0, 0, 0, -1, -9
+"/Users/dog/WebstormProjects/diplom/asdasd.md", "Markdown", -30, 0, 0, 0, 0, -4, -34
+"/Users/dog/WebstormProjects/diplom/flowchart.md", "Markdown", -19, 0, 0, 0, 0, -2, -21
+"/Users/dog/WebstormProjects/diplom/graph.md", "Markdown", -30, 0, 0, 0, 0, -6, -36
+"/Users/dog/WebstormProjects/diplom/graphasd.md", "Markdown", -136, 0, 0, 0, 0, -36, -172
+"/Users/dog/WebstormProjects/diplom/start-frontend.sh", "Shell Script", 0, -7, 0, 0, -4, -4, -15
+"/Users/dog/WebstormProjects/diplom/проектирование.md", "Markdown", -620, 0, 0, 0, 0, -157, -777
+"Total", "-", -843, -7, -2376, -5, -4, -211, -3446

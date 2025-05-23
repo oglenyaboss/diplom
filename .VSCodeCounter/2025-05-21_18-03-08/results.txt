@@ -1,0 +1,244 @@
+Date : 2025-05-21 18:03:08
+Directory : /Users/dog/WebstormProjects/diplom/mvp
+Total : 157 files,  33446 codes, 1042 comments, 2092 blanks, all 36580 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          8 |     16,808 |          0 |          6 |     16,814 |
+| TypeScript JSX     |         41 |      5,723 |        166 |        558 |      6,447 |
+| YAML               |          6 |      3,266 |          6 |         40 |      3,312 |
+| JavaScript         |         37 |      2,630 |        352 |        490 |      3,472 |
+| Go                 |         14 |      1,857 |        226 |        371 |      2,454 |
+| Markdown           |          7 |      1,112 |          0 |        304 |      1,416 |
+| TypeScript         |         16 |      1,062 |        194 |        139 |      1,395 |
+| Shell Script       |          8 |        405 |         58 |        104 |        567 |
+| Go Checksum File   |          3 |        303 |          0 |          3 |        306 |
+| Go Module File     |          3 |         96 |          0 |         16 |        112 |
+| Solidity           |          1 |         63 |         20 |         26 |        109 |
+| Docker             |          5 |         60 |         20 |         26 |        106 |
+| JSON with Comments |          1 |         27 |          0 |          1 |         28 |
+| PostCSS            |          1 |         22 |          0 |          5 |         27 |
+| Go Work File       |          1 |          7 |          0 |          3 |         10 |
+| XML                |          5 |          5 |          0 |          0 |          5 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                       | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                          |        157 |     33,446 |      1,042 |      2,092 |     36,580 |
+| . (Files)                                                                                                  |         13 |      2,080 |         32 |        290 |      2,402 |
+| analytics-service                                                                                          |          2 |         10 |          1 |          4 |         15 |
+| auth-service                                                                                               |         10 |      1,721 |         85 |        186 |      1,992 |
+| frontend                                                                                                   |         70 |     15,007 |        362 |        727 |     16,096 |
+| frontend (Files)                                                                                           |          8 |      8,219 |          4 |         28 |      8,251 |
+| frontend/public                                                                                            |          5 |          5 |          0 |          0 |          5 |
+| frontend/src                                                                                               |         57 |      6,783 |        358 |        699 |      7,840 |
+| frontend/src/api                                                                                           |          4 |        325 |        114 |         42 |        481 |
+| frontend/src/app                                                                                           |         31 |      5,307 |        147 |        499 |      5,953 |
+| frontend/src/app (Files)                                                                                   |          3 |         75 |          1 |         14 |         90 |
+| frontend/src/app/dashboard                                                                                 |          1 |        413 |         18 |         36 |        467 |
+| frontend/src/app/login                                                                                     |          1 |        114 |          9 |         20 |        143 |
+| frontend/src/app/tracking                                                                                  |         10 |      1,978 |         40 |        185 |      2,203 |
+| frontend/src/app/tracking (Files)                                                                          |          1 |        119 |          3 |         12 |        134 |
+| frontend/src/app/tracking/components                                                                       |          9 |      1,859 |         37 |        173 |      2,069 |
+| frontend/src/app/users                                                                                     |          5 |        723 |         14 |         84 |        821 |
+| frontend/src/app/users (Files)                                                                             |          1 |        329 |         10 |         26 |        365 |
+| frontend/src/app/users/components                                                                          |          4 |        394 |          4 |         58 |        456 |
+| frontend/src/app/warehouse                                                                                 |         11 |      2,004 |         65 |        160 |      2,229 |
+| frontend/src/app/warehouse (Files)                                                                         |          1 |        439 |         21 |         27 |        487 |
+| frontend/src/app/warehouse/[id]                                                                            |          2 |        592 |         13 |         39 |        644 |
+| frontend/src/app/warehouse/[id] (Files)                                                                    |          1 |        324 |          7 |         21 |        352 |
+| frontend/src/app/warehouse/[id]/edit                                                                       |          1 |        268 |          6 |         18 |        292 |
+| frontend/src/app/warehouse/analytics                                                                       |          1 |        100 |          7 |         13 |        120 |
+| frontend/src/app/warehouse/components                                                                      |          6 |        639 |         22 |         67 |        728 |
+| frontend/src/app/warehouse/create                                                                          |          1 |        234 |          2 |         14 |        250 |
+| frontend/src/components                                                                                    |         11 |        438 |         19 |         64 |        521 |
+| frontend/src/components (Files)                                                                            |          1 |          0 |          0 |          1 |          1 |
+| frontend/src/components/common                                                                             |          2 |         82 |         10 |         16 |        108 |
+| frontend/src/components/layout                                                                             |          3 |        225 |          0 |         24 |        249 |
+| frontend/src/components/providers                                                                          |          5 |        131 |          9 |         23 |        163 |
+| frontend/src/hooks                                                                                         |          1 |         90 |         26 |         18 |        134 |
+| frontend/src/store                                                                                         |          3 |        199 |          4 |         19 |        222 |
+| frontend/src/types                                                                                         |          4 |        201 |          0 |         22 |        223 |
+| frontend/src/utils                                                                                         |          3 |        223 |         48 |         35 |        306 |
+| notification-service                                                                                       |          6 |        690 |         55 |         71 |        816 |
+| tracking-service-express                                                                                   |         47 |     12,350 |        412 |        666 |     13,428 |
+| tracking-service-express (Files)                                                                           |          9 |      9,376 |         32 |        144 |      9,552 |
+| tracking-service-express/config                                                                            |          2 |         51 |          5 |         14 |         70 |
+| tracking-service-express/contracts                                                                         |          2 |        382 |         20 |         26 |        428 |
+| tracking-service-express/controllers                                                                       |          4 |        389 |         56 |         61 |        506 |
+| tracking-service-express/middleware                                                                        |          2 |         45 |          4 |         11 |         60 |
+| tracking-service-express/models                                                                            |          2 |         93 |          0 |          6 |         99 |
+| tracking-service-express/routes                                                                            |          4 |         38 |          0 |         12 |         50 |
+| tracking-service-express/scripts                                                                           |         14 |      1,068 |        151 |        228 |      1,447 |
+| tracking-service-express/services                                                                          |          3 |        742 |        109 |        126 |        977 |
+| tracking-service-express/utils                                                                             |          5 |        166 |         35 |         38 |        239 |
+| warehouse-service                                                                                          |          9 |      1,588 |         95 |        148 |      1,831 |
++------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                   | language           | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/dog/WebstormProjects/diplom/mvp/analytics-service/Dockerfile                                        | Docker             |          5 |          0 |          1 |          6 |
+| /Users/dog/WebstormProjects/diplom/mvp/analytics-service/main.go                                           | Go                 |          5 |          1 |          3 |          9 |
+| /Users/dog/WebstormProjects/diplom/mvp/api-documentation-readme.md                                         | Markdown           |         75 |          0 |         41 |        116 |
+| /Users/dog/WebstormProjects/diplom/mvp/architecture-documentation.md                                       | Markdown           |        614 |          0 |        107 |        721 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/Dockerfile                                             | Docker             |          7 |          5 |          7 |         19 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/auth.go                                                | Go                 |        183 |         22 |         39 |        244 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/cleanup.go                                             | Go                 |          5 |          2 |          3 |         10 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/ethereum.go                                            | Go                 |         26 |          5 |          8 |         39 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/go.mod                                                 | Go Module File     |         48 |          0 |          6 |         54 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/go.sum                                                 | Go Checksum File   |        159 |          0 |          1 |        160 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/main.go                                                | Go                 |        478 |         40 |        100 |        618 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/model.go                                               | Go                 |         68 |          6 |         10 |         84 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/mongo.go                                               | Go                 |         33 |          5 |         11 |         49 |
+| /Users/dog/WebstormProjects/diplom/mvp/auth-service/swagger.yaml                                           | YAML               |        714 |          0 |          1 |        715 |
+| /Users/dog/WebstormProjects/diplom/mvp/check-status.sh                                                     | Shell Script       |         66 |          9 |         10 |         85 |
+| /Users/dog/WebstormProjects/diplom/mvp/clean-and-restart.sh                                                | Shell Script       |         65 |          7 |         15 |         87 |
+| /Users/dog/WebstormProjects/diplom/mvp/combined-swagger.yaml                                               | YAML               |        516 |          4 |          6 |        526 |
+| /Users/dog/WebstormProjects/diplom/mvp/docker-compose.yml                                                  | YAML               |        122 |          2 |         10 |        134 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend-development-plan.md                                        | Markdown           |        206 |          0 |         59 |        265 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/README.md                                                  | Markdown           |         23 |          0 |         14 |         37 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/eslint.config.mjs                                          | JavaScript         |         12 |          0 |          5 |         17 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/next.config.ts                                             | TypeScript         |         24 |          2 |          3 |         29 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/package-lock.json                                          | JSON               |      8,040 |          0 |          1 |      8,041 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/package.json                                               | JSON               |         46 |          0 |          1 |         47 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/postcss.config.mjs                                         | JavaScript         |          4 |          0 |          2 |          6 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/public/file.svg                                            | XML                |          1 |          0 |          0 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/public/globe.svg                                           | XML                |          1 |          0 |          0 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/public/next.svg                                            | XML                |          1 |          0 |          0 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/public/vercel.svg                                          | XML                |          1 |          0 |          0 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/public/window.svg                                          | XML                |          1 |          0 |          0 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/auth.ts                                            | TypeScript         |         86 |         39 |         14 |        139 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/notification.ts                                    | TypeScript         |         53 |         15 |          6 |         74 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/tracking.ts                                        | TypeScript         |        104 |         33 |         12 |        149 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/warehouse.ts                                       | TypeScript         |         82 |         27 |         10 |        119 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/dashboard/page.tsx                                 | TypeScript JSX     |        413 |         18 |         36 |        467 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/globals.css                                        | PostCSS            |         22 |          0 |          5 |         27 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/layout.tsx                                         | TypeScript JSX     |         21 |          0 |          3 |         24 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/login/page.tsx                                     | TypeScript JSX     |        114 |          9 |         20 |        143 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/page.tsx                                           | TypeScript JSX     |         32 |          1 |          6 |         39 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/CreateEquipmentModal.tsx       | TypeScript JSX     |        208 |          2 |         19 |        229 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/EditEquipmentModal.tsx         | TypeScript JSX     |        240 |          9 |         24 |        273 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/EquipmentTable.tsx             | TypeScript JSX     |        327 |          6 |         28 |        361 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/RecentOperations.tsx           | TypeScript JSX     |        138 |          1 |         12 |        151 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingInstructions.tsx       | TypeScript JSX     |         88 |          0 |          9 |         97 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingServiceStatus.tsx      | TypeScript JSX     |        237 |          6 |         16 |        259 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingStats.tsx              | TypeScript JSX     |        195 |          3 |         16 |        214 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TransferEquipmentModal.tsx     | TypeScript JSX     |        186 |          6 |         23 |        215 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TransferHistory.tsx            | TypeScript JSX     |        240 |          4 |         26 |        270 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/page.tsx                                  | TypeScript JSX     |        119 |          3 |         12 |        134 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/AuthServiceStatus.tsx             | TypeScript JSX     |         73 |          1 |         14 |         88 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/CreateUserForm.tsx                | TypeScript JSX     |        147 |          0 |         17 |        164 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/EditUserForm.tsx                  | TypeScript JSX     |        129 |          3 |         19 |        151 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/UserRoleModal.tsx                 | TypeScript JSX     |         45 |          0 |          8 |         53 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/page.tsx                                     | TypeScript JSX     |        329 |         10 |         26 |        365 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/[id]/edit/page.tsx                       | TypeScript JSX     |        268 |          6 |         18 |        292 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/[id]/page.tsx                            | TypeScript JSX     |        324 |          7 |         21 |        352 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/analytics/page.tsx                       | TypeScript JSX     |        100 |          7 |         13 |        120 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/CategoryDistributionChart.tsx | TypeScript JSX     |         76 |          4 |         11 |         91 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/LowStockAlerts.tsx            | TypeScript JSX     |         82 |          2 |          6 |         90 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/PurchaseHistoryChart.tsx      | TypeScript JSX     |        125 |          5 |         14 |        144 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/TotalValueCard.tsx            | TypeScript JSX     |         41 |          2 |          5 |         48 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/WarehouseServiceStatus.tsx    | TypeScript JSX     |        216 |          6 |         16 |        238 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/WarrantyExpirations.tsx       | TypeScript JSX     |         99 |          3 |         15 |        117 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/create/page.tsx                          | TypeScript JSX     |        234 |          2 |         14 |        250 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/page.tsx                                 | TypeScript JSX     |        439 |         21 |         27 |        487 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/TransferEquipmentModal.tsx                  | TypeScript JSX     |          0 |          0 |          1 |          1 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/common/AuthGuard.tsx                        | TypeScript JSX     |         49 |         10 |         11 |         70 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/common/LoadingOverlay.tsx                   | TypeScript JSX     |         33 |          0 |          5 |         38 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/AppShell.tsx                         | TypeScript JSX     |         32 |          0 |          7 |         39 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/Header.tsx                           | TypeScript JSX     |        122 |          0 |          7 |        129 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/Navbar.tsx                           | TypeScript JSX     |         71 |          0 |         10 |         81 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/auth-provider.tsx                 | TypeScript JSX     |         51 |          9 |         10 |         70 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/index.tsx                         | TypeScript JSX     |         21 |          0 |          3 |         24 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/mantine-provider.tsx              | TypeScript JSX     |         43 |          0 |          3 |         46 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/query-provider.tsx                | TypeScript JSX     |          9 |          0 |          4 |         13 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/redux-provider.tsx                | TypeScript JSX     |          7 |          0 |          3 |         10 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/hooks/useUserInfo.ts                                   | TypeScript         |         90 |         26 |         18 |        134 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/authSlice.ts                                     | TypeScript         |        111 |          4 |          9 |        124 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/index.ts                                         | TypeScript         |         12 |          0 |          3 |         15 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/notificationsSlice.ts                            | TypeScript         |         76 |          0 |          7 |         83 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/notification.ts                                  | TypeScript         |         19 |          0 |          3 |         22 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/tracking.ts                                      | TypeScript         |         78 |          0 |          8 |         86 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/user.ts                                          | TypeScript         |         42 |          0 |          5 |         47 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/warehouse.ts                                     | TypeScript         |         62 |          0 |          6 |         68 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/api.ts                                           | TypeScript         |        130 |         19 |         23 |        172 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/date-formatter.ts                                | TypeScript         |         14 |          5 |          2 |         21 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/formatters.ts                                    | TypeScript         |         79 |         24 |         10 |        113 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/tailwind.config.js                                         | JavaScript         |         43 |          2 |          1 |         46 |
+| /Users/dog/WebstormProjects/diplom/mvp/frontend/tsconfig.json                                              | JSON with Comments |         27 |          0 |          1 |         28 |
+| /Users/dog/WebstormProjects/diplom/mvp/go.work                                                             | Go Work File       |          7 |          0 |          3 |         10 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/Dockerfile                                     | Docker             |          5 |          0 |          1 |          6 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/go.mod                                         | Go Module File     |          4 |          0 |          4 |          8 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/go.sum                                         | Go Checksum File   |          3 |          0 |          1 |          4 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/main.go                                        | Go                 |        200 |         36 |         35 |        271 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/rabbit.go                                      | Go                 |        160 |         19 |         29 |        208 |
+| /Users/dog/WebstormProjects/diplom/mvp/notification-service/swagger.yaml                                   | YAML               |        318 |          0 |          1 |        319 |
+| /Users/dog/WebstormProjects/diplom/mvp/package-lock.json                                                   | JSON               |        290 |          0 |          1 |        291 |
+| /Users/dog/WebstormProjects/diplom/mvp/package.json                                                        | JSON               |          5 |          0 |          1 |          6 |
+| /Users/dog/WebstormProjects/diplom/mvp/rebuild-and-restart.sh                                              | Shell Script       |         23 |          2 |         10 |         35 |
+| /Users/dog/WebstormProjects/diplom/mvp/start-system.sh                                                     | Shell Script       |         61 |          4 |         14 |         79 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/Dockerfile                                 | Docker             |         36 |         10 |         10 |         56 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/README.md                                  | Markdown           |         66 |          0 |         24 |         90 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/app.js                                     | JavaScript         |        114 |         15 |         19 |        148 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/blockchain-auto-update.md                  | Markdown           |         63 |          0 |         25 |         88 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/blockchain-troubleshooting.md              | Markdown           |         65 |          0 |         34 |         99 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/config/blockchain.js                       | JavaScript         |         36 |          5 |         10 |         51 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/config/db.js                               | JavaScript         |         15 |          0 |          4 |         19 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/contracts/EquipmentTracking.json           | JSON               |        319 |          0 |          0 |        319 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/contracts/EquipmentTracking.sol            | Solidity           |         63 |         20 |         26 |        109 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/blockchainController.js        | JavaScript         |         55 |         13 |         14 |         82 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/equipmentController.js         | JavaScript         |        171 |         21 |         24 |        216 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/operationsController.js        | JavaScript         |         29 |          4 |          6 |         39 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/transferController.js          | JavaScript         |        134 |         18 |         17 |        169 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/middleware/errorHandler.js                 | JavaScript         |         11 |          2 |          5 |         18 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/middleware/logger.js                       | JavaScript         |         34 |          2 |          6 |         42 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/models/Equipment.js                        | JavaScript         |         60 |          0 |          3 |         63 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/models/Transfer.js                         | JavaScript         |         33 |          0 |          3 |         36 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/package-lock.json                          | JSON               |      8,067 |          0 |          1 |      8,068 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/package.json                               | JSON               |         35 |          0 |          1 |         36 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/blockchain.js                       | JavaScript         |          9 |          0 |          3 |         12 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/equipment.js                        | JavaScript         |         15 |          0 |          3 |         18 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/operations.js                       | JavaScript         |          5 |          0 |          3 |          8 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/transfer.js                         | JavaScript         |          9 |          0 |          3 |         12 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-contract-updated.js          | JavaScript         |        104 |         13 |         17 |        134 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-contract.js                  | JavaScript         |         87 |         10 |         14 |        111 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-equipment.js                 | JavaScript         |         63 |         11 |         13 |         87 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-ethereum.js                  | JavaScript         |         52 |         10 |         13 |         75 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/compile-contract.js                | JavaScript         |         72 |          8 |         11 |         91 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/deploy-contract.js                 | JavaScript         |        110 |         16 |         24 |        150 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/get-auth-token.js                  | JavaScript         |         45 |          5 |         14 |         64 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/init-contract-updated.sh           | Shell Script       |         76 |         13 |         17 |        106 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/init-contract.sh                   | Shell Script       |         64 |         12 |         16 |         92 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/issue-equipment.js                 | JavaScript         |         81 |         17 |         19 |        117 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/login.js                           | JavaScript         |         28 |          4 |          8 |         40 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/run-api-test.sh                    | Shell Script       |         20 |          7 |          9 |         36 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/test-api-transfer.js               | JavaScript         |        260 |         25 |         53 |        338 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/token.json                         | JSON               |          6 |          0 |          0 |          6 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/server.js                                  | JavaScript         |         31 |          7 |          9 |         47 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/blockchainService.js              | JavaScript         |        347 |         45 |         61 |        453 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/rabbitMQService.js                | JavaScript         |        182 |         37 |         29 |        248 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/userService.js                    | JavaScript         |        213 |         27 |         36 |        276 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/swagger.yaml                               | YAML               |        899 |          0 |         21 |        920 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/addressMapper.js                     | JavaScript         |         14 |          4 |          3 |         21 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/ethUtils.js                          | JavaScript         |         16 |          9 |          6 |         31 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/helpers.js                           | JavaScript         |         19 |          7 |          5 |         31 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/smartTransferBlockchain.js           | JavaScript         |         58 |          8 |         12 |         78 |
+| /Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/transferBlockchain.js                | JavaScript         |         59 |          7 |         12 |         78 |
+| /Users/dog/WebstormProjects/diplom/mvp/update-contract.sh                                                  | Shell Script       |         30 |          4 |         13 |         47 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/Dockerfile                                        | Docker             |          7 |          5 |          7 |         19 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/cleanup.go                                        | Go                 |          5 |          2 |          3 |         10 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/go.mod                                            | Go Module File     |         44 |          0 |          6 |         50 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/go.sum                                            | Go Checksum File   |        141 |          0 |          1 |        142 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/main.go                                           | Go                 |        488 |         65 |         95 |        648 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/model.go                                          | Go                 |         34 |          3 |          5 |         42 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/mongo.go                                          | Go                 |         35 |          5 |         11 |         51 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/rabbit.go                                         | Go                 |        137 |         15 |         19 |        171 |
+| /Users/dog/WebstormProjects/diplom/mvp/warehouse-service/swagger.yaml                                      | YAML               |        697 |          0 |          1 |        698 |
+| Total                                                                                                      |                    |     33,446 |      1,042 |      2,092 |     36,580 |
++------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

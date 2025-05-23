@@ -1,0 +1,25 @@
+"filename", "language", "Go", "TypeScript", "JSON", "TypeScript JSX", "comment", "blank", "total"
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/package-lock.json", "JSON", 0, 0, 687, 0, 0, 0, 687
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/package.json", "JSON", 0, 0, 4, 0, 0, 0, 4
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/invoices.ts", "TypeScript", 0, 22, 0, 0, 13, 5, 40
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/invoices/[id]/page.tsx", "TypeScript JSX", 0, 0, 0, 263, 0, 26, 289
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/invoices/page.tsx", "TypeScript JSX", 0, 0, 0, 133, 0, 10, 143
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/MovementReportModal.tsx", "TypeScript JSX", 0, 0, 0, 99, 6, 14, 119
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/MovementReportPDF.tsx", "TypeScript JSX", 0, 0, 0, 218, 2, 13, 233
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/page.tsx", "TypeScript JSX", 0, 0, 0, 21, 0, 0, 21
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/[id]/page.tsx", "TypeScript JSX", 0, 0, 0, 138, 2, 4, 144
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/EnhancedReceiptGenerator.tsx", "TypeScript JSX", 0, 0, 0, 196, 5, 19, 220
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ExistingInvoicesList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 1, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ReceiptGenerator.tsx", "TypeScript JSX", 0, 0, 0, 80, 0, 7, 87
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ReceiptTemplate.tsx", "TypeScript JSX", 0, 0, 0, 114, 3, 14, 131
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/TransferEquipmentModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, -1, -1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/AppShell.tsx", "TypeScript JSX", 0, 0, 0, -2, 0, 0, -2
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/Navbar.tsx", "TypeScript JSX", 0, 0, 0, 10, 0, 1, 11
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/documents.ts", "TypeScript", 0, 98, 0, 0, 7, 7, 112
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/invoices.ts", "TypeScript", 0, 59, 0, 0, 6, 7, 72
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/invoice.go", "Go", 157, 0, 0, 0, 30, 32, 219
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/main.go", "Go", 19, 0, 0, 0, 4, 4, 27
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/model.go", "Go", 33, 0, 0, 0, 4, 5, 42
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/mongo.go", "Go", 2, 0, 0, 0, 0, 1, 3
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/rabbit.go", "Go", 63, 0, 0, 0, 6, 7, 76
+"Total", "-", 274, 179, 691, 1270, 88, 176, 2678

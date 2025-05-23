@@ -1,0 +1,170 @@
+"filename", "language", "Docker", "Go", "Go Checksum File", "Go Module File", "YAML", "Shell Script", "Markdown", "JSON", "JavaScript", "Go Work File", "Solidity", "TypeScript", "TypeScript JSX", "JSON with Comments", "PostCSS", "XML", "comment", "blank", "total"
+"/Users/dog/WebstormProjects/diplom/mvp/analytics-service/Dockerfile", "Docker", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"/Users/dog/WebstormProjects/diplom/mvp/analytics-service/main.go", "Go", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 9
+"/Users/dog/WebstormProjects/diplom/mvp/api-documentation-readme.md", "Markdown", 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 116
+"/Users/dog/WebstormProjects/diplom/mvp/architecture-documentation.md", "Markdown", 0, 0, 0, 0, 0, 0, 614, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 721
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/Dockerfile", "Docker", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 7, 19
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/auth.go", "Go", 0, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 39, 244
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/cleanup.go", "Go", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 10
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/ethereum.go", "Go", 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 8, 39
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/go.mod", "Go Module File", 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 54
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/go.sum", "Go Checksum File", 0, 0, 159, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 160
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/main.go", "Go", 0, 478, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 100, 618
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/model.go", "Go", 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 10, 84
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/mongo.go", "Go", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 11, 49
+"/Users/dog/WebstormProjects/diplom/mvp/auth-service/swagger.yaml", "YAML", 0, 0, 0, 0, 714, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 715
+"/Users/dog/WebstormProjects/diplom/mvp/check-status.sh", "Shell Script", 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 85
+"/Users/dog/WebstormProjects/diplom/mvp/clean-and-restart.sh", "Shell Script", 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 87
+"/Users/dog/WebstormProjects/diplom/mvp/combined-swagger.yaml", "YAML", 0, 0, 0, 0, 516, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 6, 526
+"/Users/dog/WebstormProjects/diplom/mvp/docker-compose.yml", "YAML", 0, 0, 0, 0, 122, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10, 134
+"/Users/dog/WebstormProjects/diplom/mvp/frontend-development-plan.md", "Markdown", 0, 0, 0, 0, 0, 0, 206, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 265
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 5, 17
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/next.config.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 2, 3, 29
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 8727, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8728
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 51
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/public/file.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/public/globe.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/public/next.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/public/vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/public/window.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/auth.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 39, 14, 139
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/invoices.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 13, 5, 40
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/notification.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 15, 6, 74
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/tracking.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 33, 12, 149
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/api/warehouse.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 0, 0, 0, 0, 27, 10, 119
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/dashboard/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 413, 0, 0, 0, 18, 36, 467
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 5, 27
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/invoices/[id]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 263, 0, 0, 0, 0, 26, 289
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/invoices/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 0, 0, 0, 0, 10, 143
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 3, 24
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/login/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 9, 20, 143
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 1, 6, 39
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/CreateEquipmentModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 208, 0, 0, 0, 2, 19, 229
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/EditEquipmentModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 0, 0, 0, 9, 24, 273
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/EquipmentTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 327, 0, 0, 0, 6, 28, 361
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/MovementReportModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 6, 14, 119
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/MovementReportPDF.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 218, 0, 0, 0, 2, 13, 233
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/RecentOperations.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 1, 12, 151
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingInstructions.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 0, 0, 0, 9, 97
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingServiceStatus.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 237, 0, 0, 0, 6, 16, 259
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TrackingStats.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 195, 0, 0, 0, 3, 16, 214
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TransferEquipmentModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 186, 0, 0, 0, 6, 23, 215
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/components/TransferHistory.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 0, 0, 0, 4, 26, 270
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/tracking/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 3, 12, 155
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/AuthServiceStatus.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 1, 14, 88
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/CreateUserForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 147, 0, 0, 0, 0, 17, 164
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/EditUserForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 3, 19, 151
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/components/UserRoleModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 8, 53
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/users/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 329, 0, 0, 0, 10, 26, 365
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/[id]/edit/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 268, 0, 0, 0, 6, 18, 292
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/[id]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 462, 0, 0, 0, 9, 25, 496
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/analytics/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 7, 13, 120
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/CategoryDistributionChart.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 4, 11, 91
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/EnhancedReceiptGenerator.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 196, 0, 0, 0, 5, 19, 220
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ExistingInvoicesList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/LowStockAlerts.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 0, 0, 0, 2, 6, 90
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/PurchaseHistoryChart.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 5, 14, 144
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ReceiptGenerator.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 0, 7, 87
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/ReceiptTemplate.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 3, 14, 131
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/TotalValueCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 2, 5, 48
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/WarehouseServiceStatus.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 216, 0, 0, 0, 6, 16, 238
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/components/WarrantyExpirations.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 3, 15, 117
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/create/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 234, 0, 0, 0, 2, 14, 250
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/app/warehouse/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 439, 0, 0, 0, 21, 27, 487
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/common/AuthGuard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 10, 11, 70
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/common/LoadingOverlay.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 5, 38
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/AppShell.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 7, 37
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/Header.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 0, 0, 0, 7, 129
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/layout/Navbar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 11, 92
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/auth-provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 9, 10, 70
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 3, 24
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/mantine-provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 3, 46
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/query-provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 4, 13
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/components/providers/redux-provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 3, 10
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/hooks/useUserInfo.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0, 0, 0, 26, 18, 134
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/authSlice.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 0, 4, 9, 124
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/store/notificationsSlice.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 7, 83
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/documents.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 98, 0, 0, 0, 0, 7, 7, 112
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/invoices.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 6, 7, 72
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/notification.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 3, 22
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/tracking.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 0, 0, 8, 86
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/user.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 5, 47
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/types/warehouse.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 6, 68
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/api.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130, 0, 0, 0, 0, 19, 23, 172
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/date-formatter.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 5, 2, 21
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/src/utils/formatters.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 24, 10, 113
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/tailwind.config.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 2, 1, 46
+"/Users/dog/WebstormProjects/diplom/mvp/frontend/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 1, 28
+"/Users/dog/WebstormProjects/diplom/mvp/go.work", "Go Work File", 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 3, 10
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/Dockerfile", "Docker", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/go.mod", "Go Module File", 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/go.sum", "Go Checksum File", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/main.go", "Go", 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 35, 271
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/rabbit.go", "Go", 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 29, 208
+"/Users/dog/WebstormProjects/diplom/mvp/notification-service/swagger.yaml", "YAML", 0, 0, 0, 0, 318, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 319
+"/Users/dog/WebstormProjects/diplom/mvp/package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 290, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 291
+"/Users/dog/WebstormProjects/diplom/mvp/package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"/Users/dog/WebstormProjects/diplom/mvp/rebuild-and-restart.sh", "Shell Script", 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10, 35
+"/Users/dog/WebstormProjects/diplom/mvp/start-system.sh", "Shell Script", 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14, 79
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/Dockerfile", "Docker", 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 56
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 90
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/app.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 0, 0, 0, 0, 15, 19, 148
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/blockchain-auto-update.md", "Markdown", 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 88
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/blockchain-troubleshooting.md", "Markdown", 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 99
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/config/blockchain.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 5, 10, 51
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/config/db.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 4, 19
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/contracts/EquipmentTracking.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 319, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 319
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/contracts/EquipmentTracking.sol", "Solidity", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 20, 26, 109
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/blockchainController.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 13, 14, 82
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/equipmentController.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 171, 0, 0, 0, 0, 0, 0, 0, 21, 24, 216
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/operationsController.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 4, 6, 39
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/controllers/transferController.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 0, 0, 0, 0, 0, 18, 17, 169
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/middleware/errorHandler.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 2, 5, 18
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/middleware/logger.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 2, 6, 42
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/models/Equipment.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 3, 63
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/models/Transfer.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 3, 36
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 8067, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8068
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 36
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/blockchain.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/equipment.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/operations.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/routes/transfer.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-contract-updated.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 0, 0, 0, 13, 17, 134
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-contract.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 0, 0, 0, 10, 14, 111
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-equipment.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 11, 13, 87
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/check-ethereum.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 10, 13, 75
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/compile-contract.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 8, 11, 91
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/deploy-contract.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 16, 24, 150
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/get-auth-token.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 5, 14, 64
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/init-contract-updated.sh", "Shell Script", 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 17, 106
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/init-contract.sh", "Shell Script", 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 16, 92
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/issue-equipment.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 17, 19, 117
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/login.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 4, 8, 40
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/run-api-test.sh", "Shell Script", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 9, 36
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/test-api-transfer.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 260, 0, 0, 0, 0, 0, 0, 0, 25, 53, 338
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/scripts/token.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/server.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 7, 9, 47
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/blockchainService.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 347, 0, 0, 0, 0, 0, 0, 0, 45, 61, 453
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/rabbitMQService.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 0, 0, 0, 0, 0, 0, 37, 29, 248
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/services/userService.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 213, 0, 0, 0, 0, 0, 0, 0, 27, 36, 276
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/swagger.yaml", "YAML", 0, 0, 0, 0, 899, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 920
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/addressMapper.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 4, 3, 21
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/ethUtils.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 9, 6, 31
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/helpers.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 7, 5, 31
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/smartTransferBlockchain.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 8, 12, 78
+"/Users/dog/WebstormProjects/diplom/mvp/tracking-service-express/utils/transferBlockchain.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 0, 0, 0, 7, 12, 78
+"/Users/dog/WebstormProjects/diplom/mvp/update-contract.sh", "Shell Script", 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 13, 47
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/Dockerfile", "Docker", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 7, 19
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/cleanup.go", "Go", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 10
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/go.mod", "Go Module File", 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 50
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/go.sum", "Go Checksum File", 0, 0, 141, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 142
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/invoice.go", "Go", 0, 157, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 32, 219
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/main.go", "Go", 0, 507, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 99, 675
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/model.go", "Go", 0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 10, 84
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/mongo.go", "Go", 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 12, 54
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/rabbit.go", "Go", 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 26, 247
+"/Users/dog/WebstormProjects/diplom/mvp/warehouse-service/swagger.yaml", "YAML", 0, 0, 0, 0, 697, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 698
+"Total", "-", 60, 2131, 303, 96, 3266, 405, 1112, 17499, 2630, 7, 63, 1241, 6993, 27, 22, 5, 1130, 2268, 39258

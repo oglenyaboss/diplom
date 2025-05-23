@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -13,6 +14,7 @@ import (
 var mongoClient *mongo.Client
 var warehouseCollection *mongo.Collection
 var transactionCollection *mongo.Collection
+var invoiceCollection *mongo.Collection
 
 func initMongo() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -37,6 +39,7 @@ func initMongo() error {
 	db := client.Database("warehouse")
 	warehouseCollection = db.Collection("items")
 	transactionCollection = db.Collection("transactions")
+	invoiceCollection = db.Collection("invoices")
 	
 	return nil
 }

@@ -4,6 +4,10 @@ const path = require("path");
 const { logger } = require("../middleware/logger");
 
 // Constants
+// Настройки сервиса:
+// AUTH_SERVICE_URL - URL сервиса аутентификации
+// AUTH_USERNAME - Имя пользователя для автоматической аутентификации (по умолчанию: admin)
+// AUTH_PASSWORD - Пароль для автоматической аутентификации (по умолчанию: admin123)
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:8000";
 const TOKEN_FILE = path.join(__dirname, "../scripts/token.json");
@@ -12,6 +16,45 @@ const TOKEN_FILE = path.join(__dirname, "../scripts/token.json");
 // { userId: { ethAddress: '0x...', lastUpdated: timestamp } }
 const userCache = new Map();
 const CACHE_TTL = 30 * 60 * 1000; // 30 минут
+
+// Получение токена через аутентификацию с логином и паролем
+const getTokenByLogin = async (username, password) => {
+  try {
+    logger.info(`Attempting to login with username: ${username}`);
+    
+    const response = await axios.post(`${AUTH_SERVICE_URL}/login`, {
+      username: username,
+      password: password
+    });
+
+    if (response.data && response.data.token) {
+      logger.info("Login successful, token obtained");
+      
+      // Сохраняем токен в файл
+      const tokenData = {
+        token: response.data.token,
+        refreshToken: response.data.refresh_token,
+        expiresAt: Date.now() + (response.data.expires_in * 1000),
+        obtainedAt: new Date().toISOString(),
+      };
+
+      fs.writeFileSync(TOKEN_FILE, JSON.stringify(tokenData, null, 2));
+      logger.info("Token saved to file");
+
+      return response.data.token;
+    } else {
+      logger.error("Login response did not contain a token");
+      return null;
+    }
+  } catch (error) {
+    logger.error(`Failed to login: ${error.message}`);
+    if (error.response) {
+      logger.error(`Response status: ${error.response.status}`);
+      logger.error(`Response data: ${JSON.stringify(error.response.data)}`);
+    }
+    return null;
+  }
+};
 
 // Получение токена авторизации из файла
 const getAuthToken = () => {
@@ -47,7 +90,7 @@ const refreshAuthToken = async () => {
 
     logger.info("Attempting to refresh expired auth token");
     const response = await axios.post(
-      `${AUTH_SERVICE_URL}/token/refresh`,
+      `${AUTH_SERVICE_URL}/refresh`,
       { refresh_token: tokenData.refreshToken },
       {
         headers: {
@@ -105,8 +148,18 @@ const getUserById = async (userId) => {
   try {
     let token = getAuthToken();
     if (!token) {
-      logger.error("No auth token available, cannot fetch user data");
-      throw new Error("Authentication token not available");
+      logger.warn("No auth token available, attempting to get new token");
+      // Получаем данные для автологина из переменных окружения
+      const username = process.env.AUTH_USERNAME || "admin";
+      const password = process.env.AUTH_PASSWORD || "admin123";
+      
+      token = await getTokenByLogin(username, password);
+      
+      if (!token) {
+        logger.error("Failed to obtain token through login, cannot fetch user data");
+        throw new Error("Authentication token not available");
+      }
+      logger.info("Successfully obtained new token through login");
     }
 
     logger.info(`Fetching user data for ID: ${userId} from auth service`);
@@ -121,7 +174,16 @@ const getUserById = async (userId) => {
       // Если получили ошибку 401 (Unauthorized), пробуем обновить токен
       if (error.response && error.response.status === 401) {
         logger.info("Received 401 error, attempting to refresh token");
-        const newToken = await refreshAuthToken();
+        let newToken = await refreshAuthToken();
+
+        if (!newToken) {
+          // Если не удалось обновить токен через refresh, пробуем логин
+          logger.info("Token refresh failed, attempting login");
+          const username = process.env.AUTH_USERNAME || "admin";
+          const password = process.env.AUTH_PASSWORD || "admin123";
+          
+          newToken = await getTokenByLogin(username, password);
+        }
 
         if (newToken) {
           logger.info("Using new token for API request");
@@ -134,8 +196,9 @@ const getUserById = async (userId) => {
             },
           });
         } else {
-          // Если не удалось обновить токен, пробрасываем ошибку дальше
-          throw error;
+          // Если не удалось ни обновить токен, ни получить новый через логин
+          logger.error("Failed to obtain valid token after all attempts");
+          throw new Error("Authentication failed: Unable to obtain valid token");
         }
       } else {
         // Если ошибка не связана с авторизацией, пробрасываем ее дальше
@@ -172,18 +235,28 @@ const getUserEthereumAddress = async (userId) => {
       return "0x0000000000000000000000000000000000000000";
     }
 
-    const userData = await getUserById(userId);
+    try {
+      const userData = await getUserById(userId);
 
-    if (userData && userData.eth_address) {
-      logger.info(
-        `Found Ethereum address for user ${userId}: ${userData.eth_address}`
+      if (userData && userData.eth_address) {
+        logger.info(
+          `Found Ethereum address for user ${userId}: ${userData.eth_address}`
+        );
+        return userData.eth_address;
+      }
+      
+      logger.warn(
+        `Ethereum address not found for user ${userId}, using fallback address`
       );
-      return userData.eth_address;
+    } catch (userError) {
+      // Если не удалось получить данные пользователя даже после всех попыток автоматической аутентификации
+      logger.error(
+        `Failed to fetch user data for Ethereum address: ${userError.message}`
+      );
     }
-
-    logger.warn(
-      `Ethereum address not found for user ${userId}, using fallback address`
-    );
+    
+    // Возвращаем адрес по умолчанию, если не смогли получить настоящий адрес
+    logger.warn(`Using fallback Ethereum address for user ${userId}`);
     return "0x1234567890AbcdEF1234567890aBcdef12345678"; // Адрес по умолчанию
   } catch (error) {
     logger.error(
@@ -198,4 +271,5 @@ module.exports = {
   getUserById,
   getUserEthereumAddress,
   refreshAuthToken,
+  getTokenByLogin,
 };

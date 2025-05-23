@@ -8,6 +8,19 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Функция для вывода меню выбора типа перезапуска
+show_rebuild_menu() {
+    echo -e "${YELLOW}Выберите тип перезапуска:${NC}"
+    echo -e "${BLUE}1)${NC} Обычный перезапуск (с сохранением кэша)"
+    echo -e "${BLUE}2)${NC} Полный ребилд (с очисткой всего кэша)"
+    read -p "Введите номер (1 или 2): " rebuild_type
+    
+    if [[ $rebuild_type != "1" && $rebuild_type != "2" ]]; then
+        echo -e "${RED}Неверный выбор. Пожалуйста, введите 1 или 2.${NC}"
+        show_rebuild_menu
+    fi
+}
+
 echo -e "${RED}=====================================================================${NC}"
 echo -e "${RED}               ПОЛНАЯ ОЧИСТКА DOCKER-ОКРУЖЕНИЯ                        ${NC}"
 echo -e "${RED}=====================================================================${NC}"
@@ -77,8 +90,16 @@ echo -e "${YELLOW}Хотите запустить систему заново? (
 read -p " " restart
 
 if [[ $restart == "y" || $restart == "Y" ]]; then
-    echo -e "${YELLOW}Запуск системы...${NC}"
-    ./start-system.sh
+    show_rebuild_menu
+    
+    if [[ $rebuild_type == "1" ]]; then
+        echo -e "${YELLOW}Запуск системы в обычном режиме...${NC}"
+        docker-compose up -d
+    else
+        echo -e "${YELLOW}Запуск системы с полным ребилдом...${NC}"
+        docker-compose build --no-cache
+        docker-compose up -d --force-recreate
+    fi
 else
     echo -e "${GREEN}Чтобы запустить систему вручную, выполните:${NC}"
     echo -e "${BLUE}   cd $PROJECT_ROOT${NC}"
