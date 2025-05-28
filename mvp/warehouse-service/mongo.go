@@ -15,6 +15,9 @@ var mongoClient *mongo.Client
 var warehouseCollection *mongo.Collection
 var transactionCollection *mongo.Collection
 var invoiceCollection *mongo.Collection
+var categoryCollection *mongo.Collection
+var warehouseLocationCollection *mongo.Collection
+var supplierCollection *mongo.Collection
 
 func initMongo() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -40,6 +43,9 @@ func initMongo() error {
 	warehouseCollection = db.Collection("items")
 	transactionCollection = db.Collection("transactions")
 	invoiceCollection = db.Collection("invoices")
+	categoryCollection = db.Collection("categories")
+	warehouseLocationCollection = db.Collection("warehouses")
+	supplierCollection = db.Collection("suppliers")
 	
 	return nil
 }

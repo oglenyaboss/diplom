@@ -193,6 +193,27 @@ func main() {
 	r.GET("/invoices/:id", getInvoice)
 	r.GET("/transactions/without-invoices", getTransactionsWithoutInvoices)
 
+	// Endpoints для работы с категориями
+	r.POST("/categories", createCategory)
+	r.GET("/categories", listCategories)
+	r.GET("/categories/:id", getCategory)
+	r.PUT("/categories/:id", updateCategory)
+	r.DELETE("/categories/:id", deleteCategory)
+
+	// Endpoints для работы со складами
+	r.POST("/warehouses", createWarehouse)
+	r.GET("/warehouses", listWarehouses)
+	r.GET("/warehouses/:id", getWarehouse)
+	r.PUT("/warehouses/:id", updateWarehouse)
+	r.DELETE("/warehouses/:id", deleteWarehouse)
+
+	// Endpoints для работы с поставщиками
+	r.POST("/suppliers", createSupplier)
+	r.GET("/suppliers", listSuppliers)
+	r.GET("/suppliers/:id", getSupplier)
+	r.PUT("/suppliers/:id", updateSupplier)
+	r.DELETE("/suppliers/:id", deleteSupplier)
+
 	log.Println("Starting warehouse service on port 8001...")
 	r.Run(":8001")
 }
@@ -671,4 +692,425 @@ func getItemTransactions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"transactions": transactions})
+}
+
+// ================================
+// CATEGORIES HANDLERS
+// ================================
+
+// Создание новой категории
+func createCategory(c *gin.Context) {
+	var category Category
+	if err := c.ShouldBindJSON(&category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Устанавливаем временные метки
+	category.CreatedAt = time.Now()
+	category.UpdatedAt = time.Now()
+
+	// Сохраняем в базе данных
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := categoryCollection.InsertOne(ctx, category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category: " + err.Error()})
+		return
+	}
+
+	category.ID = result.InsertedID.(primitive.ObjectID)
+	c.JSON(http.StatusCreated, category)
+}
+
+// Получение списка категорий
+func listCategories(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Создаем фильтр для активных категорий
+	filter := bson.M{"is_active": true}
+	
+	cursor, err := categoryCollection.Find(ctx, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories: " + err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var categories []Category
+	if err := cursor.All(ctx, &categories); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode categories: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"categories": categories})
+}
+
+// Получение категории по ID
+func getCategory(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var category Category
+	err = categoryCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&category)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch category: " + err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, category)
+}
+
+// Обновление категории
+func updateCategory(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID"})
+		return
+	}
+
+	var updateData Category
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateData.UpdatedAt = time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := categoryCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": updateData})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update category: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Category updated successfully"})
+}
+
+// Удаление категории (мягкое удаление)
+func deleteCategory(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Мягкое удаление - устанавливаем is_active = false
+	result, err := categoryCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
+		"$set": bson.M{
+			"is_active":  false,
+			"updated_at": time.Now(),
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete category: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Category deleted successfully"})
+}
+
+// ================================
+// WAREHOUSES HANDLERS
+// ================================
+
+// Создание нового склада
+func createWarehouse(c *gin.Context) {
+	var warehouse Warehouse
+	if err := c.ShouldBindJSON(&warehouse); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	warehouse.CreatedAt = time.Now()
+	warehouse.UpdatedAt = time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := warehouseLocationCollection.InsertOne(ctx, warehouse)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create warehouse: " + err.Error()})
+		return
+	}
+
+	warehouse.ID = result.InsertedID.(primitive.ObjectID)
+	c.JSON(http.StatusCreated, warehouse)
+}
+
+// Получение списка складов
+func listWarehouses(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"is_active": true}
+	
+	cursor, err := warehouseLocationCollection.Find(ctx, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch warehouses: " + err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var warehouses []Warehouse
+	if err := cursor.All(ctx, &warehouses); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode warehouses: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"warehouses": warehouses})
+}
+
+// Получение склада по ID
+func getWarehouse(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid warehouse ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var warehouse Warehouse
+	err = warehouseLocationCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&warehouse)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Warehouse not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch warehouse: " + err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, warehouse)
+}
+
+// Обновление склада
+func updateWarehouse(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid warehouse ID"})
+		return
+	}
+
+	var updateData Warehouse
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateData.UpdatedAt = time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := warehouseLocationCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": updateData})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update warehouse: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Warehouse not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Warehouse updated successfully"})
+}
+
+// Удаление склада (мягкое удаление)
+func deleteWarehouse(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid warehouse ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := warehouseLocationCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
+		"$set": bson.M{
+			"is_active":  false,
+			"updated_at": time.Now(),
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete warehouse: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Warehouse not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Warehouse deleted successfully"})
+}
+
+// ================================
+// SUPPLIERS HANDLERS
+// ================================
+
+// Создание нового поставщика
+func createSupplier(c *gin.Context) {
+	var supplier Supplier
+	if err := c.ShouldBindJSON(&supplier); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	supplier.CreatedAt = time.Now()
+	supplier.UpdatedAt = time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := supplierCollection.InsertOne(ctx, supplier)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create supplier: " + err.Error()})
+		return
+	}
+
+	supplier.ID = result.InsertedID.(primitive.ObjectID)
+	c.JSON(http.StatusCreated, supplier)
+}
+
+// Получение списка поставщиков
+func listSuppliers(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"is_active": true}
+	
+	cursor, err := supplierCollection.Find(ctx, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch suppliers: " + err.Error()})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var suppliers []Supplier
+	if err := cursor.All(ctx, &suppliers); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode suppliers: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"suppliers": suppliers})
+}
+
+// Получение поставщика по ID
+func getSupplier(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid supplier ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var supplier Supplier
+	err = supplierCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&supplier)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch supplier: " + err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, supplier)
+}
+
+// Обновление поставщика
+func updateSupplier(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid supplier ID"})
+		return
+	}
+
+	var updateData Supplier
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateData.UpdatedAt = time.Now()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := supplierCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": updateData})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update supplier: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Supplier updated successfully"})
+}
+
+// Удаление поставщика (мягкое удаление)
+func deleteSupplier(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid supplier ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := supplierCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
+		"$set": bson.M{
+			"is_active":  false,
+			"updated_at": time.Now(),
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete supplier: " + err.Error()})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Supplier deleted successfully"})
 }

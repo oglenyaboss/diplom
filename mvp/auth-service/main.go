@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +24,9 @@ func main() {
 	
 	// Создаем admin пользователя при первом запуске
 	createDefaultAdmin()
+	
+	// Создаем начальные системные настройки
+	createDefaultSystemSettings()
 	
 	r := gin.Default()
 
@@ -66,6 +70,18 @@ func main() {
        authorized.PUT("/users/:id/role", authorizationMiddleware([]string{RoleAdmin}), updateUserRole)
        authorized.PUT("/users/:id/status", authorizationMiddleware([]string{RoleAdmin}), updateUserStatus)
        authorized.POST("/users", authorizationMiddleware([]string{RoleAdmin}), createUserByAdmin)
+       
+       // Audit Logs routes
+       authorized.GET("/audit-logs", authorizationMiddleware([]string{RoleAdmin}), listAuditLogs)
+       authorized.GET("/audit-logs/:id", authorizationMiddleware([]string{RoleAdmin}), getAuditLogByID)
+       authorized.POST("/audit-logs", createAuditLog)
+       
+       // System Settings routes
+       authorized.GET("/system-settings", authorizationMiddleware([]string{RoleAdmin}), listSystemSettings)
+       authorized.GET("/system-settings/:key", authorizationMiddleware([]string{RoleAdmin}), getSystemSetting)
+       authorized.PUT("/system-settings/:key", authorizationMiddleware([]string{RoleAdmin}), updateSystemSetting)
+       authorized.POST("/system-settings", authorizationMiddleware([]string{RoleAdmin}), createSystemSetting)
+       authorized.DELETE("/system-settings/:key", authorizationMiddleware([]string{RoleAdmin}), deleteSystemSetting)
    }
 
 	log.Println("Starting auth service on port 8000...")
@@ -104,6 +120,87 @@ func createDefaultAdmin() {
 		}
 		
 		log.Printf("Создан пользователь admin с ID: %s", user.ID.Hex())
+	}
+}
+
+// Создает начальные системные настройки при первом запуске
+func createDefaultSystemSettings() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	
+	// Проверяем, есть ли хоть одна системная настройка
+	count, err := systemSettingCollection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		log.Printf("Ошибка при проверке наличия системных настроек: %v", err)
+		return
+	}
+	
+	if count == 0 {
+		// Создаем базовые системные настройки
+		defaultSettings := []SystemSetting{
+			{
+				ID:             primitive.NewObjectID(),
+				Key:            "session_timeout",
+				Category:       "security",
+				Value:          3600,
+				Description:    "Время жизни сессии в секундах",
+				DataType:       "number",
+				IsActive:       true,
+				CanBeModified:  true,
+				LastModifiedBy: "system",
+				CreatedAt:      time.Now(),
+				UpdatedAt:      time.Now(),
+			},
+			{
+				ID:             primitive.NewObjectID(),
+				Key:            "max_login_attempts",
+				Category:       "security",
+				Value:          5,
+				Description:    "Максимальное количество попыток входа",
+				DataType:       "number",
+				IsActive:       true,
+				CanBeModified:  true,
+				LastModifiedBy: "system",
+				CreatedAt:      time.Now(),
+				UpdatedAt:      time.Now(),
+			},
+			{
+				ID:             primitive.NewObjectID(),
+				Key:            "low_stock_threshold",
+				Category:       "warehouse",
+				Value:          10,
+				Description:    "Минимальный остаток товара для уведомления",
+				DataType:       "number",
+				IsActive:       true,
+				CanBeModified:  true,
+				LastModifiedBy: "system",
+				CreatedAt:      time.Now(),
+				UpdatedAt:      time.Now(),
+			},
+			{
+				ID:             primitive.NewObjectID(),
+				Key:            "notification_enabled",
+				Category:       "notifications",
+				Value:          true,
+				Description:    "Включены ли уведомления",
+				DataType:       "boolean",
+				IsActive:       true,
+				CanBeModified:  true,
+				LastModifiedBy: "system",
+				CreatedAt:      time.Now(),
+				UpdatedAt:      time.Now(),
+			},
+		}
+		
+		// Добавляем настройки в базу
+		for _, setting := range defaultSettings {
+			_, err := systemSettingCollection.InsertOne(ctx, setting)
+			if err != nil {
+				log.Printf("Ошибка при создании системной настройки %s: %v", setting.Key, err)
+			} else {
+				log.Printf("Создана системная настройка: %s", setting.Key)
+			}
+		}
 	}
 }
 
@@ -580,7 +677,7 @@ func createUserByAdmin(c *gin.Context) {
    }
 
    isActive := true
-   if req.IsActive != nil && *req.IsActive == false {
+   if req.IsActive != nil && !*req.IsActive {
        isActive = false
    }
 
@@ -615,4 +712,244 @@ func createUserByAdmin(c *gin.Context) {
            CreatedAt:  user.CreatedAt,
        },
    })
+}
+
+// ==================== AUDIT LOGS HANDLERS ====================
+
+// List all audit logs
+func listAuditLogs(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Пагинация
+	page := 1
+	limit := 10
+	if p := c.Query("page"); p != "" {
+		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+	if l := c.Query("limit"); l != "" {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 && parsed <= 100 {
+			limit = parsed
+		}
+	}
+
+	skip := (page - 1) * limit
+	opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(limit)).SetSort(bson.D{bson.E{Key: "timestamp", Value: -1}})
+
+	filter := bson.M{}
+	if userID := c.Query("user_id"); userID != "" {
+		filter["user_id"] = userID
+	}
+	if action := c.Query("action"); action != "" {
+		filter["action"] = action
+	}
+
+	cursor, err := auditLogCollection.Find(ctx, filter, opts)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch audit logs"})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var auditLogs []AuditLog
+	if err = cursor.All(ctx, &auditLogs); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode audit logs"})
+		return
+	}
+
+	// Подсчет общего количества
+	total, _ := auditLogCollection.CountDocuments(ctx, filter)
+
+	c.JSON(http.StatusOK, gin.H{
+		"audit_logs": auditLogs,
+		"pagination": gin.H{
+			"page":  page,
+			"limit": limit,
+			"total": total,
+		},
+	})
+}
+
+// Get audit log by ID
+func getAuditLogByID(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid audit log ID"})
+		return
+	}
+
+	var auditLog AuditLog
+	err = auditLogCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&auditLog)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Audit log not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, auditLog)
+}
+
+// Create audit log
+func createAuditLog(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var req AuditLog
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	req.ID = primitive.NewObjectID()
+	req.Timestamp = time.Now()
+
+	_, err := auditLogCollection.InsertOne(ctx, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create audit log"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Audit log created successfully",
+		"audit_log": req,
+	})
+}
+
+// ==================== SYSTEM SETTINGS HANDLERS ====================
+
+// List all system settings
+func listSystemSettings(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cursor, err := systemSettingCollection.Find(ctx, bson.M{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch system settings"})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var settings []SystemSetting
+	if err = cursor.All(ctx, &settings); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode system settings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"system_settings": settings})
+}
+
+// Get system setting by key
+func getSystemSetting(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	key := c.Param("key")
+	var setting SystemSetting
+	err := systemSettingCollection.FindOne(ctx, bson.M{"key": key}).Decode(&setting)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, setting)
+}
+
+// Create system setting
+func createSystemSetting(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var req SystemSetting
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Проверяем, что setting с таким key не существует
+	count, err := systemSettingCollection.CountDocuments(ctx, bson.M{"key": req.Key})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing setting"})
+		return
+	}
+	if count > 0 {
+		c.JSON(http.StatusConflict, gin.H{"error": "System setting with this key already exists"})
+		return
+	}
+
+	req.ID = primitive.NewObjectID()
+	req.CreatedAt = time.Now()
+	req.UpdatedAt = time.Now()
+
+	_, err = systemSettingCollection.InsertOne(ctx, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create system setting"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "System setting created successfully",
+		"system_setting": req,
+	})
+}
+
+// Update system setting
+func updateSystemSetting(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	key := c.Param("key")
+	var req struct {
+		Value       interface{} `json:"value" binding:"required"`
+		Description string      `json:"description"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"value":       req.Value,
+			"description": req.Description,
+			"updated_at":  time.Now(),
+		},
+	}
+
+	result, err := systemSettingCollection.UpdateOne(ctx, bson.M{"key": key}, update)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update system setting"})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "System setting updated successfully"})
+}
+
+// Delete system setting
+func deleteSystemSetting(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	key := c.Param("key")
+	result, err := systemSettingCollection.DeleteOne(ctx, bson.M{"key": key})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete system setting"})
+		return
+	}
+
+	if result.DeletedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "System setting deleted successfully"})
 }

@@ -81,3 +81,68 @@ type Invoice struct {
 	TransactionID primitive.ObjectID `bson:"transaction_id,omitempty" json:"transactionId,omitempty"` // Связь с транзакцией
 	CreatedAt     time.Time          `bson:"created_at" json:"createdAt"` // Время сохранения накладной
 }
+
+// Category представляет категорию оборудования
+type Category struct {
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Code           string             `bson:"code" json:"code"`                                   // Уникальный код категории
+	Name           string             `bson:"name" json:"name"`                                   // Название категории
+	Description    string             `bson:"description,omitempty" json:"description,omitempty"` // Описание
+	ParentCategory *string            `bson:"parent_category,omitempty" json:"parent_category,omitempty"` // Родительская категория
+	IsActive       bool               `bson:"is_active" json:"is_active"`                         // Активна ли категория
+	CreatedAt      time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt      time.Time          `bson:"updated_at" json:"updated_at"`
+}
+
+// Address представляет адрес
+type Address struct {
+	Street     string `bson:"street" json:"street"`
+	City       string `bson:"city" json:"city"`
+	Region     string `bson:"region" json:"region"`
+	PostalCode string `bson:"postal_code" json:"postal_code"`
+	Country    string `bson:"country" json:"country"`
+}
+
+// Contact представляет контактную информацию
+type Contact struct {
+	Phone   string `bson:"phone,omitempty" json:"phone,omitempty"`
+	Email   string `bson:"email,omitempty" json:"email,omitempty"`
+	Website string `bson:"website,omitempty" json:"website,omitempty"`
+	Manager string `bson:"manager,omitempty" json:"manager,omitempty"`
+}
+
+// Warehouse представляет складское помещение
+type Warehouse struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Code      string             `bson:"code" json:"code"`           // Уникальный код склада
+	Name      string             `bson:"name" json:"name"`           // Название склада
+	Address   Address            `bson:"address" json:"address"`     // Адрес склада
+	Contact   Contact            `bson:"contact" json:"contact"`     // Контактная информация
+	AreaSqm   float64            `bson:"area_sqm" json:"area_sqm"`   // Площадь в кв.м
+	Capacity  int                `bson:"capacity" json:"capacity"`   // Вместимость
+	IsActive  bool               `bson:"is_active" json:"is_active"` // Активен ли склад
+	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
+}
+
+// ContactPerson представляет контактное лицо поставщика
+type ContactPerson struct {
+	Name     string `bson:"name" json:"name"`
+	Position string `bson:"position,omitempty" json:"position,omitempty"`
+	Phone    string `bson:"phone,omitempty" json:"phone,omitempty"`
+	Email    string `bson:"email,omitempty" json:"email,omitempty"`
+}
+
+// Supplier представляет поставщика оборудования
+type Supplier struct {
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	CompanyName   string             `bson:"company_name" json:"company_name"`       // Название компании
+	TaxID         string             `bson:"tax_id" json:"tax_id"`                   // ИНН/Налоговый номер
+	Contact       Contact            `bson:"contact" json:"contact"`                 // Основная контактная информация
+	ContactPerson ContactPerson      `bson:"contact_person" json:"contact_person"`   // Контактное лицо
+	PaymentTerms  string             `bson:"payment_terms,omitempty" json:"payment_terms,omitempty"` // Условия оплаты
+	DeliveryTerms string             `bson:"delivery_terms,omitempty" json:"delivery_terms,omitempty"` // Условия поставки
+	IsActive      bool               `bson:"is_active" json:"is_active"`             // Активен ли поставщик
+	CreatedAt     time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt     time.Time          `bson:"updated_at" json:"updated_at"`
+}

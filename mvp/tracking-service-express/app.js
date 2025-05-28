@@ -13,6 +13,7 @@ const transferRoutes = require("./routes/transfer");
 const blockchainRoutes = require("./routes/blockchain");
 const operationsRoutes = require("./routes/operations");
 const reportsRoutes = require("./routes/reports");
+const maintenanceRoutes = require("./routes/maintenance");
 
 // Load environment variables
 require("dotenv").config();
@@ -51,6 +52,7 @@ app.use("/transfer", transferRoutes);
 app.use("/blockchain", blockchainRoutes);
 app.use("/operations", operationsRoutes);
 app.use("/reports", reportsRoutes);
+app.use("/maintenance-schedules", maintenanceRoutes);
 
 // Health check
 app.get("/ping", async (req, res) => {

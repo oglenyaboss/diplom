@@ -49,16 +49,16 @@ type UserResponse struct {
 }
 
 type SignupRequest struct {
-   Username   string `json:"username" binding:"required"`
-   Email      string `json:"email" binding:"required,email"`
-   Password   string `json:"password" binding:"required,min=6"`
-   FirstName  string `json:"first_name" binding:"required"`
-   LastName   string `json:"last_name" binding:"required"`
-   Department string `json:"department"`
-   Position   string `json:"position"`
-   Role       string `json:"role"`
-   IsActive   *bool  `json:"is_active,omitempty"`
-   EthAddress string `json:"eth_address,omitempty"`
+	Username   string `json:"username" binding:"required"`
+	Email      string `json:"email" binding:"required,email"`
+	Password   string `json:"password" binding:"required,min=6"`
+	FirstName  string `json:"first_name" binding:"required"`
+	LastName   string `json:"last_name" binding:"required"`
+	Department string `json:"department"`
+	Position   string `json:"position"`
+	Role       string `json:"role"`
+	IsActive   *bool  `json:"is_active,omitempty"`
+	EthAddress string `json:"eth_address,omitempty"`
 }
 
 // LoginRequest представляет запрос на авторизацию пользователя
@@ -80,4 +80,34 @@ type TokenResponse struct {
 // RefreshTokenRequest представляет запрос на обновление токена
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
+// AuditLog представляет запись журнала аудита
+type AuditLog struct {
+	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	UserID     string             `bson:"user_id" json:"user_id"`                         // ID пользователя
+	SessionID  string             `bson:"session_id,omitempty" json:"session_id,omitempty"` // ID сессии
+	ActionType string             `bson:"action_type" json:"action_type"`                 // Тип действия
+	Resource   string             `bson:"resource" json:"resource"`                       // Ресурс (equipment, user, etc.)
+	ResourceID primitive.ObjectID `bson:"resource_id,omitempty" json:"resource_id,omitempty"` // ID ресурса
+	Details    map[string]interface{} `bson:"details,omitempty" json:"details,omitempty"` // Дополнительные детали
+	IPAddress  string             `bson:"ip_address,omitempty" json:"ip_address,omitempty"` // IP адрес
+	UserAgent  string             `bson:"user_agent,omitempty" json:"user_agent,omitempty"` // User Agent
+	Timestamp  time.Time          `bson:"timestamp" json:"timestamp"`                     // Время действия
+	Result     string             `bson:"result" json:"result"`                           // Результат (success, failure)
+}
+
+// SystemSetting представляет системную настройку
+type SystemSetting struct {
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Key            string             `bson:"key" json:"key"`                                       // Ключ настройки
+	Category       string             `bson:"category" json:"category"`                             // Категория настройки
+	Value          interface{}        `bson:"value" json:"value"`                                   // Значение настройки
+	Description    string             `bson:"description,omitempty" json:"description,omitempty"`   // Описание настройки
+	DataType       string             `bson:"data_type" json:"data_type"`                           // Тип данных (string, number, boolean, object)
+	IsActive       bool               `bson:"is_active" json:"is_active"`                           // Активна ли настройка
+	CanBeModified  bool               `bson:"can_be_modified" json:"can_be_modified"`               // Можно ли изменять
+	LastModifiedBy string             `bson:"last_modified_by,omitempty" json:"last_modified_by,omitempty"` // Кем последний раз изменена
+	CreatedAt      time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt      time.Time          `bson:"updated_at" json:"updated_at"`
 }
